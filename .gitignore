@@ -1,4 +1,4 @@
-templates
-__pycache__
-instance
+*/__pycache__/*
+templates/
 static
+instance
