@@ -1,6 +1,6 @@
 from datetime import datetime , date
 from werkzeug.security import check_password_hash, generate_password_hash
-
+import pymongo
 class User(object): # добавить корзину и друге возможные поля 
     def __init__(self,first_name,last_name,birth_date,phone, email,password):
         self.__first_name = first_name
