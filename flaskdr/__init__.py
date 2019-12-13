@@ -27,8 +27,8 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
             DATABASE_URI = DATABASE_URI
         )
     else:
-        app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
-        app.config.from_pyfile('config.py')
+        app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or SECRET_KEY
+        app.config.from_pyfile('production-config.py')
     CORS(app)
     #app.config.from_object(Configuration())
     from . import database
