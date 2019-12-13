@@ -3,3 +3,4 @@ templates/
 static
 venv
 production-config.py 
+.vscode/
