@@ -4,3 +4,4 @@ static
 venv
 production-config.py 
 .vscode/
+logs.txt
