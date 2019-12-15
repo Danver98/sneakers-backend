@@ -12,7 +12,6 @@ DATABASE_URI = "mongodb+srv://danver98:{}@cluster0-nsbea.mongodb.net/test?retryW
 
 def create_app(test_config = None,debug_config = True ,instance_relative_config = False):
     app = Flask(__name__)
-    """
     app.response_class = CustomResponse
     if debug_config:
         app.config.from_mapping(
@@ -29,7 +28,6 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     database.init_db(app)
     from . import auth
     app.register_blueprint(auth.bp)
-    """
     @app.route('/')
     def main_page():
         print("Starting the app...")
