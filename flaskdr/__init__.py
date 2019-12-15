@@ -1,7 +1,7 @@
 from flask import Flask , request , render_template , Response 
 from flask_cors import CORS
 from instance.config import *
-from custom_response import CustomResponse
+from flaskdr.custom_response import CustomResponse
 import pymongo, os
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
