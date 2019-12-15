@@ -1,4 +1,4 @@
-from flask import Flask , request , render_template , Response 
+from flask import Flask , request , render_template , Response , jsonify
 from flask_cors import CORS
 from instance.config import *
 from flaskdr.custom_response import CustomResponse
@@ -31,7 +31,8 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     @app.route('/', methods = ['GET'])
     def main_page():
         print("Starting the app...")
-        return render_template('index.html')
+        return jsonify(returned = True , message="Tryna to start Heroku")
+        #return render_template('index.html')
         
 
     return app
