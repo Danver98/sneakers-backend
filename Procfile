@@ -1,1 +1,1 @@
-"web: gunicorn flaskdr:app" 
+"web: gunicorn flaskdr:create_app" 
