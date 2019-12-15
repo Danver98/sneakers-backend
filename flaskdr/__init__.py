@@ -8,15 +8,7 @@ CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
 ADMIN_NAME = " "
 DATABASE_URI = "mongodb+srv://danver98:{}@cluster0-nsbea.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD)
 
-# проверить повторную регистрацию 
-# проверить возврат значений из базы данных
-#  сделать авторизацию
-# сделать выход из аккаунта
-# добавить сессию
-# проверить правильность введённых форм 
-# добавить flaskWTF
 # добавить @login_required для других страниц
-
 
 def create_app(test_config = None,debug_config = True ,instance_relative_config = False):
     app = Flask(__name__)
