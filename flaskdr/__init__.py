@@ -2,6 +2,8 @@ from flask import Flask , request , render_template , Response , jsonify
 from flask_cors import CORS
 from instance.config import *
 from flaskdr.custom_response import CustomResponse
+from pymongo.errors import ConnectionFailure
+from werkzeug.exceptions import HTTPException
 import pymongo, os
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
@@ -33,7 +35,15 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
         print("Starting the app...")
         return jsonify(returned = True , message="Tryna to start Heroku")
         #return render_template('index.html')
+    
+    @app.errorhandler(HTTPException)
+    def handle_exception(e):    
+        return jsonify(success = False , code = e.code, name = e.name,description = e.description)
         
-
+    @app.errorhandler(ConnectionFailure)
+    def database_exception(e):
+        response = e.get_response()
+        jsonify(success = False , code = 500 , name = "database" , description = "cannot complete request to database")
+        
     return app
 

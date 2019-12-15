@@ -1,9 +1,9 @@
 from flask import request , g ,flash, url_for, session , redirect ,current_app , Blueprint , render_template , get_flashed_messages , jsonify
 from datetime import datetime , date
 from werkzeug.security import check_password_hash, generate_password_hash
-import json
 from bson import json_util
-import functools
+import functools,json
+#PyMongoError
 bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
 @bp.route('/register/', methods = ['GET','POST'])
@@ -109,5 +109,6 @@ def login_required(view):
             return jsonify(login_required = True)
         return view(**kwargs)
     return wrapped_view
+
 
 

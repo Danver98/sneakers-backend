@@ -2,6 +2,7 @@ from pymongo import MongoClient
 from flask import current_app , g
 COLLECTION_NAME = "users_collection"
 DATABASE = "common_database"
+ATTEMPTS = 3
 
 def get_db_connection():
     if 'con' not in g:
@@ -14,13 +15,6 @@ def get_col():
         g.db = MongoClient(current_app.config['DATABASE_URI'])[DATABASE][COLLECTION_NAME]
     return g.db[COLLECTION_NAME]
 
-"""
-@app.teardown_appcontext
-def close_db():
-    db = g.pop('db',None)
-    if db is not None:
-        db.close()
-"""
 def close_db_connetion(e = None):
     g.pop('db',None)
     con = g.pop('con',None)
@@ -31,3 +25,4 @@ def init_db(app):
     app.teardown_appcontext(close_db_connetion)
     pass
     
+
