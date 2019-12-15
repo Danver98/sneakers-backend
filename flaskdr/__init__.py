@@ -30,11 +30,10 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     from . import auth
     app.register_blueprint(auth.bp)
     """
-    @app.route('/', methods = ['GET'])
+    @app.route('/')
     def main_page():
         print("Starting the app...")
-        return "Hello World"
-        #return jsonify(returned = True , message="Tryna to start Heroku")
+        return jsonify(returned = True , message="Tryna to start Heroku")
         #return render_template('index.html')
         
 
