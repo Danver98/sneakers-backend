@@ -32,8 +32,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     app.register_blueprint(auth.bp)
     @app.route('/')
     def main_page():
-        return jsonify(returned = True , message="Trying to start Heroku")
-        #return render_template('index.html')
+        return jsonify(success = True,message="This is app main page") 
     
     @app.errorhandler(HTTPException)
     def handle_exception(e):    

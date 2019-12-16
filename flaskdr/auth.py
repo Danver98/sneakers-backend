@@ -9,13 +9,14 @@ bp = Blueprint('auth',__name__,url_prefix ='/auth')
 def register():
     credentials = {}
     if request.method == 'POST':
-        first_name =request.form['first_name']
-        last_name = request.form['last_name'] 
-        password = request.form['password'] 
-        phone = request.form['phone']
-        email = request.form['email'] 
-        birth_date = request.form['birth_date']
-        credentials = request.form.to_dict().pop("password")
+        data = request.get_json(force = True)
+        first_name =data['firstName']
+        last_name = data['lastName'] 
+        password = data['password'] 
+        phone = data['telephone']
+        email = data['email'] 
+        birth_date = data['birthday']
+        credentials = data.to_dict().pop("password")
         error = None
         if not first_name:
            error = "Не указано имя"
@@ -53,12 +54,11 @@ def register():
 @bp.route('/login/',methods = ['GET','POST'])
 def login():
     credentials = {}
-    return jsonify(message = "This is test message", code = 200)
-    """
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-        credentials = request.form.to_dict().pop("password")
+        data = request.get_json(force = True)
+        email = data['email']
+        password = data['password']
+        credentials = data.to_dict().pop("password")
         error = None
         if not email:
             error = "Не указан e-mail"
@@ -85,7 +85,7 @@ def login():
                 error = "Неверный пароль"
                 flash(error)
     return jsonify( logged = False, credentials = credentials , messages = get_flashed_messages()) 
-    """
+    
 @bp.route('/logout/', methods=['POST', 'GET'])
 def logout():
     session.clear()
