@@ -3,7 +3,6 @@ from datetime import datetime , date
 from werkzeug.security import check_password_hash, generate_password_hash
 from bson import json_util
 import functools,json
-#PyMongoError
 bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
 @bp.route('/register/', methods = ['GET','POST'])
@@ -54,6 +53,8 @@ def register():
 @bp.route('/login/',methods = ['GET','POST'])
 def login():
     credentials = {}
+    return jsonify(message = "This is test message", code = 200)
+    """
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -84,7 +85,7 @@ def login():
                 error = "Неверный пароль"
                 flash(error)
     return jsonify( logged = False, credentials = credentials , messages = get_flashed_messages()) 
-
+    """
 @bp.route('/logout/', methods=['POST', 'GET'])
 def logout():
     session.clear()

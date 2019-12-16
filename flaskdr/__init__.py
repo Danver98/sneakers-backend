@@ -32,8 +32,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     app.register_blueprint(auth.bp)
     @app.route('/')
     def main_page():
-        print("Starting the app...")
-        return jsonify(returned = True , message="Tryna to start Heroku")
+        return jsonify(returned = True , message="Trying to start Heroku")
         #return render_template('index.html')
     
     @app.errorhandler(HTTPException)
@@ -43,7 +42,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     @app.errorhandler(ConnectionFailure)
     def database_exception(e):
         response = e.get_response()
-        jsonify(success = False , code = 500 , name = "database" , description = "cannot complete request to database")
+        jsonify(success = False , code = 500 , name = "database error" , description = "cannot complete request to database")
         
     return app
 
