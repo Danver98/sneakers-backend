@@ -56,8 +56,8 @@ def login():
     credentials = {}
     if request is None:
         return "Request is None"
-    else:
-        return request.method
+    elif request.method == 'POST':
+        return jsonify( content_type = request.headers.get('Content-Type'))
     #return jsonify(request)
     if request.method == 'POST':
         data = request.get_json(force = True)
