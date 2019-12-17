@@ -54,6 +54,8 @@ def register():
 @bp.route('/login/',methods = ['GET','POST'])
 def login():
     credentials = {}
+    if request is None:
+        return "Request is None"
     return jsonify(request)
     if request.method == 'POST':
         data = request.get_json(force = True)
