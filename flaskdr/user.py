@@ -6,7 +6,7 @@ class User(object): # добавить корзину и друге возмож
         self.__first_name = first_name
         self.__last_name = last_name
         if isinstance(birth_date,str):        
-            self.__birth_date = datetime.strptime(birth_date,"%Y-%m-%d").date()
+            self.__birth_date = datetime.strptime(birth_date,"%Y-%m-%d")
         else:
             self.__birth_date = birth_date
         self.__phone = phone
