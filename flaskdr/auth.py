@@ -57,8 +57,12 @@ def login():
     if request is None:
         return "Request is None"
     elif request.method == 'POST':
+        if request.headers.get('Content-Type') == "application/json":
+            print("=========")
+            print(request.get_json())
+            print("=========")
         return jsonify( content_type = request.headers.get('Content-Type'))
-    #return jsonify(request)
+
     if request.method == 'POST':
         data = request.get_json(force = True)
         email = data['email']
