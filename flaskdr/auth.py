@@ -43,6 +43,8 @@ def register():
             user = user.User(first_name,last_name,birth_date,phone,email,password)
             col = database.get_db_connection()[database.COLLECTION_NAME]
             if col.find_one({"email": email}) is None:
+                print("From register")
+                print(user.get_user_data_no_passwd)
                 col.insert(user.get_user_data())
                 flash("Вы успешно зарегистрировались!")
                 return jsonify(registered = True ,credentials = credentials, messages = get_flashed_messages())
@@ -76,6 +78,8 @@ def login():
                 flash(error)
             elif check_password_hash(doc['password'],password):
                 user = user.User.convert_from_doc(doc)
+                print("From login")
+                print(user.get_user_data_no_passwd())
                 session.clear()
                 session['user'] = user.get_user_data_no_passwd()
                 session['user_id'] = str(doc['_id'])
