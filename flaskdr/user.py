@@ -6,12 +6,11 @@ class User(object): # добавить корзину и друге возмож
         self.__first_name = first_name
         self.__last_name = last_name
         if isinstance(birth_date,str):        
-            self.__birth_date = datetime.strptime(birth_date,"%Y-%m-%d")
+            self.__birth_date = datetime.strptime(birth_date,"%Y-%m-%d").date()
         else:
             self.__birth_date = birth_date
         self.__phone = phone
         self.__email = email
-        # может быть,пароль вообще убрать?
         self.__password = generate_password_hash(password)
 
     def _set_date(self,birth_date):
