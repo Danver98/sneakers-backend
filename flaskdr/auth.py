@@ -10,16 +10,13 @@ def register():
     credentials = {}
     if request.method == 'POST':
         data = request.get_json(force = True)
-        print("========")
-        print(data)
-        print("========")
-        first_name =data['firstName']
+        first_name = data['firstName']
         last_name = data['lastName'] 
         password = data['password'] 
         phone = data['telephone']
         email = data['email'] 
         birth_date = data['birthday']
-        credentials = data.pop("password")
+        credentials = {key:data[key] for key in data if key!="password"}
         error = None
         if not first_name:
            error = "Не указано имя"
@@ -59,12 +56,9 @@ def login():
     credentials = {}
     if request.method == 'POST':
         data = request.get_json(force = True)
-        print("========")
-        print(data)
-        print("========")
         email = data['email']
         password = data['password']
-        credentials = data.pop("password")
+        credentials = {key:data[key] for key in data if key!="password"}
         error = None
         if not email:
             error = "Не указан e-mail"
@@ -83,7 +77,7 @@ def login():
             elif check_password_hash(doc['password'],password):
                 user = user.User.convert_from_doc(doc)
                 session.clear()
-                session['user'] = user.get_user_data().pop("password")
+                session['user'] = user.get_user_data_no_passwd()
                 session['user_id'] = str(doc['_id'])
                 flash("Вы успешно вошли!")
                 return  jsonify(logged = True , credentials = session['user'] , messages = get_flashed_messages())
@@ -95,7 +89,7 @@ def login():
 @bp.route('/logout/', methods=['POST', 'GET'])
 def logout():
     session.clear()
-    return jsonify(logged_out = True)
+    return jsonify(logged_out = True , credentials = None , messages= "User has logged out")
 
 
 @bp.before_app_request
@@ -113,7 +107,7 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return jsonify(login_required = True)
+            return jsonify(login_required = True , message = "Login is required")
         return view(**kwargs)
     return wrapped_view
 
