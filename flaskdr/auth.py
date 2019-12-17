@@ -13,10 +13,11 @@ def register():
         first_name = data['firstName']
         last_name = data['lastName'] 
         password = data['password'] 
-        phone = data['telephone']
+        phone = "+7" + data['telephone']
         email = data['email'] 
         birth_date = data['birthday']
         credentials = {key:data[key] for key in data if key!="password"}
+        credentials["telephone"] = phone
         error = None
         if not first_name:
            error = "Не указано имя"
@@ -44,7 +45,7 @@ def register():
             col = database.get_db_connection()[database.COLLECTION_NAME]
             if col.find_one({"email": email}) is None:
                 print("From register")
-                print(user.get_user_data_no_passwd)
+                print(user.get_user_data_no_passwd())
                 col.insert(user.get_user_data())
                 flash("Вы успешно зарегистрировались!")
                 return jsonify(registered = True ,credentials = credentials, messages = get_flashed_messages())
