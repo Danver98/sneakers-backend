@@ -33,11 +33,11 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     @app.route('/')
     def main_page():
         return jsonify(success = True,message="This is app main page") 
-    
+    """
     @app.errorhandler(HTTPException)
     def handle_exception(e):    
         return jsonify(success = False , code = e.code, name = e.name,description = e.description)
-        
+    """    
     @app.errorhandler(ConnectionFailure)
     def database_exception(e):
         response = e.get_response()
