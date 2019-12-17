@@ -10,13 +10,16 @@ def register():
     credentials = {}
     if request.method == 'POST':
         data = request.get_json(force = True)
+        print("========")
+        print(data)
+        print("========")
         first_name =data['firstName']
         last_name = data['lastName'] 
         password = data['password'] 
         phone = data['telephone']
         email = data['email'] 
         birth_date = data['birthday']
-        credentials = data.to_dict().pop("password")
+        credentials = data.pop("password")
         error = None
         if not first_name:
            error = "Не указано имя"
@@ -61,7 +64,7 @@ def login():
         print("========")
         email = data['email']
         password = data['password']
-        credentials = data.to_dict().pop("password")
+        credentials = data.pop("password")
         error = None
         if not email:
             error = "Не указан e-mail"
