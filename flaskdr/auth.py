@@ -111,7 +111,7 @@ def login_required(view):
     def wrapped_view(**kwargs):
         if g.user is None:
             error = 3
-            return jsonify( error = error, message = "Login is required")
+            return jsonify( error = error, message = "Необходима авторизация")
         return view(**kwargs)
     return wrapped_view
 
