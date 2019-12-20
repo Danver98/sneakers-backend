@@ -30,6 +30,9 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     database.init_db(app)
     from . import auth
     app.register_blueprint(auth.bp)
+
+    from . import catalog
+    app.register_blueprint(catalog.app_catalog)
     
     @app.route('/')
     def main_page():
