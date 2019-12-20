@@ -91,8 +91,8 @@ def login():
     
 @bp.route('/logout/', methods=['POST', 'GET'])
 def logout():
-    session.clear(error = 0)
-    return jsonify()
+    session.clear()
+    return jsonify(error = 0)
 
 
 @bp.before_app_request
