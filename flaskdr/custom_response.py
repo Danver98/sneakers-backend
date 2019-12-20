@@ -9,4 +9,4 @@ class CustomResponse(Response):
 
 class CustomDatabaseException(Exception):
     def __init__(self):
-        super().__init()
+        super().__init__()
