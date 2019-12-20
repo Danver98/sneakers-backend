@@ -74,7 +74,7 @@ def login():
             if doc is None:
                 #error = "Неверный логин/почта"
                 error = 1
-                flash("Неверный логин/почта")
+                flash("Не существует ползователя с таким логином(почтой)")
             elif check_password_hash(doc['password'],password):
                 user = user.User.convert_from_doc(doc)
                 session.clear()
