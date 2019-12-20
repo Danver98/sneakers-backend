@@ -8,6 +8,7 @@ bp = Blueprint('auth',__name__,url_prefix ='/auth')
 @bp.route('/register/', methods = ['GET','POST'])
 def register():
     #credentials = {}
+    error = None
     if request.method == 'POST':
         data = request.get_json(force = True)
         first_name = data['firstName']
@@ -18,7 +19,6 @@ def register():
         birth_date = data['birthday']
         #credentials = {key:data[key] for key in data if key!="password"}
         #credentials["telephone"] = phone
-        error = None
         if not first_name:
            error = "Не указано имя"
            flash(error)
@@ -55,11 +55,11 @@ def register():
 
 @bp.route('/login/',methods = ['GET','POST'])
 def login():
+    error = None
     if request.method == 'POST':
         data = request.get_json(force = True)
         email = data['email']
         password = data['password']
-        error = None
         if not email:
             error = "Не указан e-mail"
             flash(error)
