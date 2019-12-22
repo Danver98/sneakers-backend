@@ -72,7 +72,6 @@ def login():
             col = database.get_db_connection()[database.COLLECTION_NAME]
             doc = col.find_one({"email":email})
             if doc is None:
-                #error = "Неверный логин/почта"
                 error = 1
                 flash("Не существует ползователя с таким логином(почтой)")
             elif check_password_hash(doc['password'],password):
@@ -80,11 +79,11 @@ def login():
                 session.clear()
                 session['user'] = user.get_user_data_no_passwd()
                 session['user_id'] = str(doc['_id'])
+                #session['email'] = user.email
                 credentials = {"firstName": user.first_name , "lastName": user.last_name}
                 flash("Вы успешно вошли!")
                 return  jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
             else:
-                #error = "Неверный пароль"
                 error = 2
                 flash("Неверный пароль")
     return jsonify(error = error , messages = get_flashed_messages()) 
