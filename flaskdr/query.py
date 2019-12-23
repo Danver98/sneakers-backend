@@ -5,12 +5,12 @@ class Query:
     def add_index(self, param):
         for index in param:
             if index == "size":
-                sizes=[]
+                param_list = []
+                
+                for item in param[index].split('-'):
+                    param_list.append({index: int(item)})
 
-                for item in param[index].split(','):
-                    sizes.append({index: int(item)})
-
-                self.query["$or"] = sizes
+                self.query["$or"] = param_list
             else:
                 self.query[index] = param[index]
 
