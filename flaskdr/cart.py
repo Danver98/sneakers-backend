@@ -24,6 +24,7 @@ from flask import Blueprint, request , url_for , jsonify , session
 from flaskdr.queries import collection_foots
 from flaskdr.database import get_db_connection , COLLECTION_NAME
 from bson.objectid import ObjectId
+import random
 
 ca = Blueprint('cart',__name__,url_prefix ='/cart')
 
@@ -91,10 +92,11 @@ def read_cart():
 
 
 
-#передать Жене
 @ca.route('/confirm', methods = ['GET', 'POST'])
-def some_to_do():
-    pass
+def receive_confirmation():
+    delete_all_from_cart()
+    return  jsonify(error = 0 , messages="Ваш заказ {} принят".format(random.randint(000,999)))
+    
 
 
 
