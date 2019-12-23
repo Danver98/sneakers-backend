@@ -8,6 +8,7 @@ bp = Blueprint('auth',__name__,url_prefix ='/auth')
 @bp.route('/register/', methods = ['GET','POST'])
 def register():
     #credentials = {}
+    error = None
     if request.method == 'POST':
         data = request.get_json(force = True)
         first_name = data['firstName']
@@ -18,7 +19,6 @@ def register():
         birth_date = data['birthday']
         #credentials = {key:data[key] for key in data if key!="password"}
         #credentials["telephone"] = phone
-        error = None
         if not first_name:
            error = "Не указано имя"
            flash(error)
@@ -55,11 +55,11 @@ def register():
 
 @bp.route('/login/',methods = ['GET','POST'])
 def login():
+    error = None
     if request.method == 'POST':
         data = request.get_json(force = True)
         email = data['email']
         password = data['password']
-        error = None
         if not email:
             error = "Не указан e-mail"
             flash(error)
@@ -72,27 +72,26 @@ def login():
             col = database.get_db_connection()[database.COLLECTION_NAME]
             doc = col.find_one({"email":email})
             if doc is None:
-                #error = "Неверный логин/почта"
                 error = 1
-                flash("Неверный логин/почта")
+                flash("Не существует ползователя с таким логином(почтой)")
             elif check_password_hash(doc['password'],password):
                 user = user.User.convert_from_doc(doc)
                 session.clear()
                 session['user'] = user.get_user_data_no_passwd()
                 session['user_id'] = str(doc['_id'])
+                #session['email'] = user.email
                 credentials = {"firstName": user.first_name , "lastName": user.last_name}
                 flash("Вы успешно вошли!")
                 return  jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
             else:
-                #error = "Неверный пароль"
                 error = 2
                 flash("Неверный пароль")
     return jsonify(error = error , messages = get_flashed_messages()) 
     
 @bp.route('/logout/', methods=['POST', 'GET'])
 def logout():
-    session.clear(error = 0)
-    return jsonify()
+    session.clear()
+    return jsonify(error = 0)
 
 
 @bp.before_app_request
@@ -104,6 +103,7 @@ def initalize_logged_user():
     else:
         g.user = user
         g.user_id = session.get('user_id')
+        #g.user_email = session.get('user').get('email)
     
 
 def login_required(view):
