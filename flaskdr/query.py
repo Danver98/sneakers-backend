@@ -11,6 +11,8 @@ class Query:
                     param_list.append({index: int(item)})
 
                 self.query["$or"] = param_list
+            elif index == "cost":
+                self.query["cost"] = {"$gte": int(param[index]) - 1000, "$lte": int(param[index]) + 1000}
             else:
                 self.query[index] = param[index]
 
