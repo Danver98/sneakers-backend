@@ -15,5 +15,4 @@ class Query:
                 self.query[index] = param[index]
 
     def get_query(self):
-        print(self.query)
         return self.query
