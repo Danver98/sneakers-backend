@@ -34,6 +34,9 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     from . import catalog
     app.register_blueprint(catalog.app_catalog)
     
+    from . import cart
+    app.register_blueprint(cart.ca)
+
     @app.route('/')
     def main_page():
         return jsonify(success = True,messages="This is app main page") 
@@ -47,6 +50,6 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     @app.errorhandler(ConnectionFailure)
     def database_exception(e):
         jsonify(error = -3 , messages = "Не удаётся выполнить запрос к базе данных. Попробуйте ещё раз")
-        
+     
     return app
 

@@ -30,7 +30,8 @@ ca = Blueprint('cart',__name__,url_prefix ='/cart')
 # Используется 'cart': {'id1':1, 'id2':2 , ...}
 
 def get_cart_list():
-    user_email = session.get("user")["email"]
+    from flaskdr.user import User
+    user_email = session.get("user").get('email')
     user_col = get_db_connection()[COLLECTION_NAME]
     goods = user_col.find({"email":user_email}).get("cart")
     if goods is None:
@@ -72,7 +73,7 @@ def delete_one_from_cart():
 
 @ca.route('/delete_all/', methods = ['GET', 'POST'])
 def delete_all_from_cart():
-    user_email = session.get("user")["email"]
+    user_email = session.get("user").get("email")
     user_col = get_db_connection()[COLLECTION_NAME]
     user_col.update({"email":user_email} , {"$unset": {"cart":""}})
     return jsonify(error = 0, messages="Корзина очищена")

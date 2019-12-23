@@ -103,7 +103,7 @@ def initalize_logged_user():
     else:
         g.user = user
         g.user_id = session.get('user_id')
-        g.user_email = session.get('user')["email"]
+        #g.user_email = session.get('user').get('email)
     
 
 def login_required(view):
