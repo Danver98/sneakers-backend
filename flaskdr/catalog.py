@@ -1,4 +1,4 @@
-from . import queries
+import queries
 from flask import Flask, jsonify, request, Blueprint
 
 #app_catalog = Flask(__name__)
