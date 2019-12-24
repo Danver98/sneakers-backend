@@ -1,6 +1,6 @@
 import pymongo
-import foots
-import query
+from . import foots
+from . import query
 from bson.objectid import ObjectId
 
 dmitriy = pymongo.MongoClient('mongodb+srv://dmitriy:admin@cluster0-0jgxv.mongodb.net/test?retryWrites=true&w=majority')

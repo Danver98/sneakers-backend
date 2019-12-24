@@ -1,14 +1,21 @@
+<<<<<<< HEAD
 #sorry, the code is under repair
 """
  
+=======
+"""
+>>>>>>> e510992b6152e62382a6c58006c3d323f256c275
 from prostor-smsjson import JsonGate
 gate = JsonGate('api_login', 'api_password')
 
 print gate.credits() # узнаем текущий баланс
 print gate.senders() # получаем список доступных подписей
 """
+<<<<<<< HEAD
 
 """
+=======
+>>>>>>> e510992b6152e62382a6c58006c3d323f256c275
 messages = [{
 "clientId" : "1",
 "phone": "71234567890",
@@ -29,8 +36,11 @@ messages = [{
 }
 ]
 """
+<<<<<<< HEAD
 
 """
+=======
+>>>>>>> e510992b6152e62382a6c58006c3d323f256c275
 print gate.send(messages, 'testQueue') #отправляем пакет sms
 
 messages =
@@ -38,5 +48,9 @@ messages =
 ntId":"3","smscId":11255144}]
 print gate.status(messages) # получаем статусы для пакета sms
 print gate.statusQueue('testQueue', 10) # получаем статусы из очереди 'testQueue'
+<<<<<<< HEAD
 """
 
+=======
+"""
+>>>>>>> e510992b6152e62382a6c58006c3d323f256c275

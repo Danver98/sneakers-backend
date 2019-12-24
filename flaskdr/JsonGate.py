@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 #sorry, the code is under repair
 '''
+=======
+>>>>>>> e510992b6152e62382a6c58006c3d323f256c275
 import urllib
 import json
 
@@ -16,7 +19,11 @@ class JsonGate:
     url = self.__getUrl(uri)
     data = self.__formPacket(params)
     try:
+<<<<<<< HEAD
       f = urllib.urlopen(url, data)
+=======
+      f = urllib.request.urlopen(url, data)
+>>>>>>> e510992b6152e62382a6c58006c3d323f256c275
       result = f.read()
       return eval(result)
     except IOError as e:
@@ -70,5 +77,9 @@ class JsonGate:
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
   print(JsonGate.__doc__)
 '''
+=======
+  print(JsonGate.__doc__)
+>>>>>>> e510992b6152e62382a6c58006c3d323f256c275
