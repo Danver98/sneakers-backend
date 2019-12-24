@@ -12,7 +12,7 @@ def get_filters_result(param):
     query_param = query.Query()
     query_param.add_index(param)
 
-    cursor = collection_foots.find(query_param.get_query(), {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1, "size": 1})
+    cursor = collection_foots.find(query_param.get_query(), {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1})
     if len (query_param.get_sort()) > 0:
         cursor.sort(query_param.get_sort())
 
@@ -33,4 +33,12 @@ def get_one(obj_id):
 def get_search_result(param):
     query_list = param["query"].split('%')
 
-    return query_list
+    cursor = collection_foots.find({}, {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1})
+
+    foot_list = foots.FootList()
+
+    for item in cursor:
+        item["_id"] = str(item.get("_id"))
+        foot_list.add_foot(item)
+
+    return foot_list.get_all()
