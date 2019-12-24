@@ -3,16 +3,19 @@ import foots
 import query
 from bson.objectid import ObjectId
 
-dmitriy = pymongo.MongoClient('mongodb+srv://dmitriy:admin@cluster0-xpg5l.mongodb.net/test?retryWrites=true&w=majority')
+dmitriy = pymongo.MongoClient('mongodb+srv://dmitriy:admin@cluster0-0jgxv.mongodb.net/test?retryWrites=true&w=majority')
 #dmitriy = pymongo.MongoClient('mongodb://localhost:27017/')
 fastfoot = dmitriy.Fastfoot
 collection_foots = fastfoot.foots
 
-def get_result(param):
-    query_params = query.Query()
-    query_params.add_index(param)
+def get_filters_result(param):
+    query_param = query.Query()
+    query_param.add_index(param)
 
-    cursor = collection_foots.find(query_params.get_query(), {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1, "size": 1})
+    cursor = collection_foots.find(query_param.get_query(), {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1, "size": 1})
+    if len (query_param.get_sort()) > 0:
+        cursor.sort(query_param.get_sort())
+
     foot_list = foots.FootList()
 
     for item in cursor:
@@ -26,3 +29,8 @@ def get_one(obj_id):
     cursor["_id"] = str(cursor.get("_id"))
 
     return cursor
+
+def get_search_result(param):
+    query_list = param["query"].split('%')
+
+    return query_list
