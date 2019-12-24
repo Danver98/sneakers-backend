@@ -95,6 +95,8 @@ def read_cart():
 
 @ca.route('/confirm', methods = ['GET', 'POST'])
 def receive_confirmation():
+     # собираю инфу с корзины и передаю в новую колекцию
+     
     delete_all_from_cart()
     return  jsonify(error = 0 , messages="Ваш заказ {} принят".format(random.randint(000,999)))
     

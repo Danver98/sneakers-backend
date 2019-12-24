@@ -1,3 +1,5 @@
+#sorry, the code is under repair
+'''
 import urllib
 import json
 
@@ -69,3 +71,4 @@ class JsonGate:
 
 if __name__ == "__main__":
   print(JsonGate.__doc__)
+'''

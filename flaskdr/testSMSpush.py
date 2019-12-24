@@ -1,9 +1,13 @@
+#sorry, the code is under repair
 """
+ 
 from prostor-smsjson import JsonGate
 gate = JsonGate('api_login', 'api_password')
 
 print gate.credits() # узнаем текущий баланс
 print gate.senders() # получаем список доступных подписей
+"""
+
 """
 messages = [{
 "clientId" : "1",
@@ -25,6 +29,8 @@ messages = [{
 }
 ]
 """
+
+"""
 print gate.send(messages, 'testQueue') #отправляем пакет sms
 
 messages =
@@ -33,3 +39,4 @@ ntId":"3","smscId":11255144}]
 print gate.status(messages) # получаем статусы для пакета sms
 print gate.statusQueue('testQueue', 10) # получаем статусы из очереди 'testQueue'
 """
+
