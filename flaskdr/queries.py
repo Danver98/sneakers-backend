@@ -30,6 +30,12 @@ def get_one(obj_id):
 
     return cursor
 
+def update_param(obj_id, key, value):
+    collection_foots.update({"_id": ObjectId(obj_id)}, {"$set": {key: value}})
+
+def update_count(obj_id, step):
+    update_param(obj_id, "count", get_one(obj_id).get("count") + step)
+
 def get_search_result(param):
     query_list = param["query"].split('%')
 
