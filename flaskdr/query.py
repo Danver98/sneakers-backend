@@ -29,5 +29,4 @@ class Query:
         return self.query
 
     def get_sort(self):
-        print (self.sort_list)
         return self.sort_list
