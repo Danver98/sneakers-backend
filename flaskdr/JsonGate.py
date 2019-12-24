@@ -14,7 +14,7 @@ class JsonGate:
     url = self.__getUrl(uri)
     data = self.__formPacket(params)
     try:
-      f = urllib.urlopen(url, data)
+      f = urllib.request.urlopen(url, data)
       result = f.read()
       return eval(result)
     except IOError as e:
