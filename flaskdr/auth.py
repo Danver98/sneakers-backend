@@ -7,7 +7,8 @@ bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
 @bp.route('/register/', methods = ['GET','POST'])
 def register():
-    credentials = {}
+    #credentials = {}
+    error = None
     if request.method == 'POST':
         data = request.get_json(force = True)
         first_name = data['firstName']
@@ -16,9 +17,8 @@ def register():
         phone = "+7" + data['telephone']
         email = data['email'] 
         birth_date = data['birthday']
-        credentials = {key:data[key] for key in data if key!="password"}
-        credentials["telephone"] = phone
-        error = None
+        #credentials = {key:data[key] for key in data if key!="password"}
+        #credentials["telephone"] = phone
         if not first_name:
            error = "Не указано имя"
            flash(error)
@@ -46,21 +46,20 @@ def register():
             if col.find_one({"email": email}) is None:
                 col.insert(user.get_user_data())
                 flash("Вы успешно зарегистрировались!")
-                return jsonify(registered = True ,credentials = credentials, messages = get_flashed_messages())
+                return jsonify(error = 0, messages = get_flashed_messages())
             else:
+                error = 1
                 flash("Пользователь с данным e-mail уже существует")
-    return jsonify(registered = False ,credentials = credentials, messages = get_flashed_messages())
+    return jsonify(error = error, messages = get_flashed_messages())
 
 
 @bp.route('/login/',methods = ['GET','POST'])
 def login():
-    credentials = {}
+    error = None
     if request.method == 'POST':
         data = request.get_json(force = True)
         email = data['email']
         password = data['password']
-        credentials = {key:data[key] for key in data if key!="password"}
-        error = None
         if not email:
             error = "Не указан e-mail"
             flash(error)
@@ -73,24 +72,26 @@ def login():
             col = database.get_db_connection()[database.COLLECTION_NAME]
             doc = col.find_one({"email":email})
             if doc is None:
-                error = "Неверный логин/почта"
-                flash(error)
+                error = 1
+                flash("Не существует ползователя с таким логином(почтой)")
             elif check_password_hash(doc['password'],password):
                 user = user.User.convert_from_doc(doc)
                 session.clear()
                 session['user'] = user.get_user_data_no_passwd()
                 session['user_id'] = str(doc['_id'])
+                #session['email'] = user.email
+                credentials = {"firstName": user.first_name , "lastName": user.last_name}
                 flash("Вы успешно вошли!")
-                return  jsonify(logged = True , credentials = session['user'] , messages = get_flashed_messages())
+                return  jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
             else:
-                error = "Неверный пароль"
-                flash(error)
-    return jsonify( logged = False, credentials = credentials , messages = get_flashed_messages()) 
+                error = 2
+                flash("Неверный пароль")
+    return jsonify(error = error , messages = get_flashed_messages()) 
     
 @bp.route('/logout/', methods=['POST', 'GET'])
 def logout():
     session.clear()
-    return jsonify(logged_out = True , credentials = None , messages= "User has logged out")
+    return jsonify(error = 0)
 
 
 @bp.before_app_request
@@ -102,13 +103,15 @@ def initalize_logged_user():
     else:
         g.user = user
         g.user_id = session.get('user_id')
+        #g.user_email = session.get('user').get('email)
     
 
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return jsonify(login_required = True , message = "Login is required")
+            error = 3
+            return jsonify( error = error, message = "Необходима авторизация")
         return view(**kwargs)
     return wrapped_view
 

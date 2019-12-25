@@ -3,13 +3,13 @@ from flask_cors import CORS
 from instance.config import *
 from flaskdr.custom_response import CustomResponse
 from pymongo.errors import ConnectionFailure
-from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import HTTPException, InternalServerError
 import pymongo, os
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
 ADMIN_NAME = " "
 DATABASE_URI = "mongodb+srv://danver98:{}@cluster0-nsbea.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD)
-
+#DATABASE_URI = "mongodb+srv://dbDevelepner:54321@cluster0-dbjfp.azure.mongodb.net/test?retryWrites=true&w=majority"
 # добавить @login_required для других страниц
 
 def create_app(test_config = None,debug_config = True ,instance_relative_config = False):
@@ -30,18 +30,26 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     database.init_db(app)
     from . import auth
     app.register_blueprint(auth.bp)
+
+    from . import catalog
+    app.register_blueprint(catalog.app_catalog)
+    
+    from . import cart
+    app.register_blueprint(cart.ca)
+
     @app.route('/')
     def main_page():
-        return jsonify(success = True,message="This is app main page") 
+        return jsonify(success = True,messages="This is app main page") 
     
     @app.errorhandler(HTTPException)
-    def handle_exception(e):    
-        return jsonify(success = False , code = e.code, name = e.name,description = e.description)
+    def handle_exception(e):
+        if isinstance(e,InternalServerError):
+            return jsonify(error = -1 , messages = "Упс,произошла ошибка на сервере. Попробуйте выполнить действие ещё раз")
+        return jsonify(error = -2 , messages = "Упс,произошла ошибка при передаче данных. Попробуйте ещё раз")
        
     @app.errorhandler(ConnectionFailure)
     def database_exception(e):
-        response = e.get_response()
-        jsonify(success = False , code = 500 , name = "database error" , description = "cannot complete request to database")
-        
+        jsonify(error = -3 , messages = "Не удаётся выполнить запрос к базе данных. Попробуйте ещё раз")
+     
     return app
 
