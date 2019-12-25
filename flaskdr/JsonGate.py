@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 #sorry, the code is under repair
 '''
-=======
->>>>>>> e510992b6152e62382a6c58006c3d323f256c275
 import urllib
 import json
 
