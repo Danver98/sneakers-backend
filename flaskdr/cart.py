@@ -90,7 +90,16 @@ def read_cart():
         return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
     return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Список товаров корзины")
 
-
+@ca.route('/in_base',methods = ['GET'])
+def in_base():
+    data = request.args.get('email')
+    if data is None:
+        return jsonify(error = 1 , messages = "Parameter not specified")
+    user_col = get_db_connection()[COLLECTION_NAME]
+    user = user_col.find({"email":data}) 
+    if user is not None:
+        return jsonify(messages = "User is presented in base")
+    return jsonify(messages = "There is no user with such email")
 
 
 @ca.route('/confirm', methods = ['GET', 'POST'])
