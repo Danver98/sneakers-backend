@@ -4,6 +4,7 @@ from instance.config import *
 from flaskdr.custom_response import CustomResponse
 from pymongo.errors import ConnectionFailure
 from werkzeug.exceptions import HTTPException, InternalServerError
+from . import  auth, catalog , cart , database
 import pymongo, os
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
@@ -25,22 +26,17 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
         app.config.from_pyfile('production-config.py')
     CORS(app)
     #app.config.from_object(Configuration())
-    from . import database
-    # если @app.teardown_appcontext не используется
-    database.init_db(app)
-    from . import auth
-    app.register_blueprint(auth.bp)
-
-    from . import catalog
-    app.register_blueprint(catalog.app_catalog)
     
-    from . import cart
+    # если @app.teardown_appcontext не используется
+    database.init_db(app)   
+    app.register_blueprint(auth.bp)   
+    app.register_blueprint(catalog.app_catalog)
     app.register_blueprint(cart.ca)
 
     @app.route('/')
     def main_page():
         return jsonify(success = True,messages="This is app main page") 
-    
+    """
     @app.errorhandler(HTTPException)
     def handle_exception(e):
         if isinstance(e,InternalServerError):
@@ -50,6 +46,6 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     @app.errorhandler(ConnectionFailure)
     def database_exception(e):
         jsonify(error = -3 , messages = "Не удаётся выполнить запрос к базе данных. Попробуйте ещё раз")
-     
+    """
     return app
 
