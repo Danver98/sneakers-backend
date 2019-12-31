@@ -8,8 +8,10 @@ from . import  auth, catalog , cart , database
 import pymongo, os
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
+CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
 ADMIN_NAME = " "
 DATABASE_URI = "mongodb+srv://danver98:{}@cluster0-nsbea.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD)
+#DATABASE_URI = "mongodb+srv://danver98:{}@cluster1-im2oj.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD_PROJECT_2)
 #DATABASE_URI = "mongodb+srv://dbDevelepner:54321@cluster0-dbjfp.azure.mongodb.net/test?retryWrites=true&w=majority"
 # добавить @login_required для других страниц
 

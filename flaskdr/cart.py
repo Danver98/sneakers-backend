@@ -1,11 +1,10 @@
-from flask import Blueprint, request , url_for , jsonify , session
+from flask import Blueprint, request , url_for , jsonify , session , redirect
 from flaskdr.queries import collection_foots
 from flaskdr.database import get_db_connection , COLLECTION_NAME
 from bson.objectid import ObjectId
 import random
 
 from pymongo import MongoClient
-from flaskdr.user import User
 
 class Cart:
     __cart = {}
@@ -31,11 +30,10 @@ class Cart:
 
 ca = Blueprint('cart',__name__,url_prefix ='/cart')
 # Используется 'cart': {'id1':1, 'id2':2 , ...}
+user_email = "dicker@mail.ru"
 
 def get_new_db_users_col():
-    CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
     CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
-    #DATABASE_URI = "mongodb+srv://danver98:{}@cluster0-nsbea.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD)
     DATABASE_URI = "mongodb+srv://danver98:{}@cluster1-im2oj.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD_PROJECT_2)
     DATABASE = "common_database"
     COLLECTION_NAME = "users_collection"
@@ -45,7 +43,6 @@ def get_new_db_users_col():
     return user_col
 
 def get_cart_list(email = None):
-    user_email = "dicker@mail.ru"
     #user_email = session.get("user").get('email') or request.args.get('email') or email
     #user_col = get_db_connection()[COLLECTION_NAME]
     user_col = get_new_db_users_col()      
@@ -73,21 +70,19 @@ def get_cart_list(email = None):
  
 @ca.route('/add/', methods = ['GET', 'POST'])
 def add_to_cart():
-    user_email = "dicker@mail.ru"
     item_id = request.args.get("id")
-    item_count = int(request.args.get("count"))
+    item_count = request.args.get("count")
     if (item_id is None) or (item_count is None):
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     #user_email = session.get("user")["email"]
     #user_col = get_db_connection()[COLLECTION_NAME]
     user_col = get_new_db_users_col()
-    user_col.update_one({"email":user_email} , {"$set": {"cart.{}".format(item_id):item_count}})
+    user_col.update_one({"email":user_email} , {"$set": {"cart.{}".format(item_id):int(item_count)}})
     cart = user_col.find_one({"email":user_email}).get("cart")
     return jsonify(error = 0 , cart=cart, messages="Товар добавлен в корзину")
 
 @ca.route('/delete_one/', methods = ['GET', 'DELETE'])
 def delete_one_from_cart():
-    user_email = "dicker@mail.ru"
     item_id = request.args.get("id")
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр 'id товара' не передан"))
@@ -102,7 +97,6 @@ def delete_one_from_cart():
 
 @ca.route('/delete_all/', methods = ['GET', 'DELETE'])
 def delete_all_from_cart():
-    user_email = "dicker@mail.ru"
     #user_email = session.get("user").get("email")
     #user_col = get_db_connection()[COLLECTION_NAME]
     user_col = get_new_db_users_col()
@@ -111,7 +105,7 @@ def delete_all_from_cart():
 
 @ca.route('/update/', methods = ['GET', 'PUT'])
 def update_cart():
-    pass
+    return redirect(url_for('cart.add_to_cart', id = request.args.get("id"), count = request.args.get("count")))
 
 @ca.route('/read/', methods = ['GET'])
 def read_cart():

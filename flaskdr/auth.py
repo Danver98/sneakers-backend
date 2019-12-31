@@ -9,9 +9,9 @@ bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
 @bp.route('/register/', methods = ['GET','POST'])
 def register():
-    if request.method == 'GET':
-        return jsonify(error = -1 , messages = "That was GET method")
     error = None
+    if request.method == 'GET':
+        return jsonify(error = error , messages = "That was GET method")
     data = request.get_json(force = True)
     first_name = data['firstName']
     last_name = data['lastName'] 
@@ -51,9 +51,9 @@ def register():
 
 @bp.route('/login/',methods = ['GET','POST'])
 def login():
-    if request.method == 'GET':
-        return jsonify(error = -1 , messages = "That was GET method")
     error = None
+    if request.method == 'GET':
+        return jsonify(error = error , messages = "That was GET method")
     data = request.get_json(force = True)
     email = data['email']
     password = data['password']
