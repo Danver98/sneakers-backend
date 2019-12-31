@@ -30,7 +30,7 @@ class Cart:
 
 ca = Blueprint('cart',__name__,url_prefix ='/cart')
 # Используется 'cart': {'id1':1, 'id2':2 , ...}
-user_email = "dicker@mail.ru"
+#user_email = "dicker@mail.ru"
 
 def get_new_db_users_col():
     CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
@@ -43,14 +43,13 @@ def get_new_db_users_col():
     return user_col
 
 def get_cart_list(email = None):
-    #user_email = session.get("user")["email"] or request.args.get('email') or email
-    #user_col = get_db_connection()[COLLECTION_NAME]
-    user_col = get_new_db_users_col()  # comment for heroku    
+    user_email = session.get("user")["email"] or request.args.get('email') or email
+    user_col = get_db_connection()[COLLECTION_NAME]
+    #user_col = get_new_db_users_col()  # comment for heroku    
     goods = user_col.find_one({"email":user_email}).get("cart")
     if goods is None:
         return None
     cart, total_sum , total_count = [] , 0 ,0
-    """
     for i,(k,v) in enumerate(goods.items()):
         item = collection_foots.find_one({"_id":ObjectId(k)}) #?
         cost = item["cost"]
@@ -67,6 +66,7 @@ def get_cart_list(email = None):
         total_sum+=0
         cart.append({"id":k , "amount":int(v)})
     return (cart,total_sum , total_count)
+    """
  
 @ca.route('/add/', methods = ['GET', 'POST'])
 def add_to_cart():
@@ -76,9 +76,9 @@ def add_to_cart():
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     if queries.get_one(item_id).get("count") <= 0:
         return( jsonify(error = -3 , messages = "Товар отсутствует на складе/нет такого количества")) 
-    #user_email = session.get("user")["email"]
-    #user_col = get_db_connection()[COLLECTION_NAME]
-    user_col = get_new_db_users_col() # comment for heroku
+    user_email = session.get("user")["email"]
+    user_col = get_db_connection()[COLLECTION_NAME]
+    #user_col = get_new_db_users_col() # comment for heroku
     #queries.update_count(item_id, - 1)
     user_col.update_one({"email":user_email} , {"$set": {"cart.{}".format(item_id):1}})
     cart = user_col.find_one({"email":user_email}).get("cart")
@@ -90,9 +90,9 @@ def delete_one_from_cart():
     item_id = request.args.get("id") # or data['id'] - POST/DELETE
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр 'id товара' не передан"))
-    #user_email = session.get("user")["email"]
-    #user_col = get_db_connection()[COLLECTION_NAME]
-    user_col = get_new_db_users_col() # comment for heroku
+    user_email = session.get("user")["email"]
+    user_col = get_db_connection()[COLLECTION_NAME]
+    #user_col = get_new_db_users_col() # comment for heroku
     user_col.update_one({"email":user_email} , {"$unset": {"cart.{}".format(item_id):""}})
     data = get_cart_list()
     if data is None:
@@ -101,9 +101,9 @@ def delete_one_from_cart():
 
 @ca.route('/delete_all/', methods = ['GET', 'DELETE'])
 def delete_all_from_cart():
-    #user_email = session.get("user").get("email")
-    #user_col = get_db_connection()[COLLECTION_NAME]
-    user_col = get_new_db_users_col() # comment for heroku
+    user_email = session.get("user").get("email")
+    user_col = get_db_connection()[COLLECTION_NAME]
+    #user_col = get_new_db_users_col() # comment for heroku
     user_col.update_one({"email":user_email} , {"$unset": {"cart":""}})
     return jsonify(error = 0, messages="Корзина очищена")
 
@@ -117,9 +117,9 @@ def update_cart():
     item_count = request.args.get("count") # or data['count'] - POST
     if (item_id is None) or (item_count is None):
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
-    #user_email = session.get("user")["email"]
-    #user_col = get_db_connection()[COLLECTION_NAME]
-    user_col = get_new_db_users_col() # comment for heroku
+    user_email = session.get("user")["email"]
+    user_col = get_db_connection()[COLLECTION_NAME]
+    #user_col = get_new_db_users_col() # comment for heroku
     good = user_col.find_one({"$and":[{"email":user_email} , {"cart.$":{"$eq":item_id}}]})
     if good is None:
         return( jsonify(error = -1 , messages = "Товара с данным id нет в корзине"))
