@@ -44,9 +44,9 @@ def get_new_db_users_col():
 
 def get_cart_list(email = None):
     if request:
-        print("HAS REQUEST")
+        return("HAS REQUEST")
     else:
-        print("NO REQUEST")
+        return("NO REQUEST")
     user_email = session.get("user")["email"] or request.args.get('email') or email
     user_col = get_db_connection()[COLLECTION_NAME]
     #user_col = get_new_db_users_col()  # comment for heroku    
