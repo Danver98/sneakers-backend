@@ -50,6 +50,5 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     def database_exception(e):
         print(traceback.format_exc())
         jsonify(error = -3 , messages = "Не удаётся выполнить запрос к базе данных. Попробуйте ещё раз")
-
     return app
 
