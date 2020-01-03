@@ -30,7 +30,6 @@ class Cart:
 
 ca = Blueprint('cart',__name__,url_prefix ='/cart')
 # Используется 'cart': {'id1':1, 'id2':2 , ...}
-#user_email = "dicker@mail.ru"
 
 def get_new_db_users_col():
     CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
@@ -116,9 +115,9 @@ def update_cart():
     data = get_cart_list()
     if data is None:
         return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
-    #data = request.get_json() - если будет POST + возврат, если GET
-    item_id = request.args.get("id") # or data['id'] - POST
-    item_count = request.args.get("count") # or data['count'] - POST
+    data = request.get_json(silent = True)
+    item_id = data.get("_id") or request.args.get("id")
+    item_count = data.get("count") or request.args.get("count")
     if (item_id is None) or (item_count is None):
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     user_email = session.get("user")["email"]
