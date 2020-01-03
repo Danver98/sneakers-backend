@@ -68,7 +68,7 @@ def login():
         doc = col.find_one({"email":email})
         if doc is None:
             error = 1
-            flash("Не существует ползователя с таким логином(почтой)")
+            flash("Не существует пользователя с таким логином(почтой)")
         elif check_password_hash(doc['password'],password):
             user = User.convert_from_doc(doc)
             session.clear()
@@ -83,7 +83,7 @@ def login():
             flash("Неверный пароль")
     return jsonify(error = error , messages = get_flashed_messages()) 
     
-@bp.route('/logout/', methods=['POST', 'GET'])
+@bp.route('/logout/', methods=['GET' ,'POST'])
 def logout():
     session.clear()
     print("=====")
