@@ -5,7 +5,7 @@ from flaskdr.custom_response import CustomResponse
 from pymongo.errors import ConnectionFailure
 from werkzeug.exceptions import HTTPException, InternalServerError
 from . import  auth, catalog , cart , database
-import pymongo, os
+import pymongo, os , traceback
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
 CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
@@ -38,16 +38,18 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     @app.route('/')
     def main_page():
         return jsonify(success = True,messages="This is app main page") 
-    """
+    
     @app.errorhandler(HTTPException)
     def handle_exception(e):
         if isinstance(e,InternalServerError):
+            print(traceback.format_exc())
             return jsonify(error = -1 , messages = "Упс,произошла ошибка на сервере. Попробуйте выполнить действие ещё раз")
         return jsonify(error = -2 , messages = "Упс,произошла ошибка при передаче данных. Попробуйте ещё раз")
        
     @app.errorhandler(ConnectionFailure)
     def database_exception(e):
+        print(traceback.format_exc())
         jsonify(error = -3 , messages = "Не удаётся выполнить запрос к базе данных. Попробуйте ещё раз")
-    """
+
     return app
 
