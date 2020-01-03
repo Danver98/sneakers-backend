@@ -13,6 +13,7 @@ def register():
     if request.method == 'GET':
         return jsonify(error = error , messages = "That was GET method")
     data = request.get_json(force = True)
+    return jsonify(message = "Here it is")
     first_name = data['firstName']
     last_name = data['lastName'] 
     password = data['password'] 
