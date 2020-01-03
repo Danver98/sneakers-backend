@@ -43,10 +43,6 @@ def get_new_db_users_col():
     return user_col
 
 def get_cart_list(email = None):
-    if request:
-        print("HAS REQUEST")
-    else:
-        print("NO REQUEST")
     user_email = session.get("user")["email"] or request.args.get('email') or email
     user_col = get_db_connection()[COLLECTION_NAME]
     #user_col = get_new_db_users_col()  # comment for heroku    
@@ -54,15 +50,6 @@ def get_cart_list(email = None):
     if goods is None:
         return None
     cart, total_sum , total_count = [] , 0 ,0
-    for i,(k,v) in enumerate(goods.items()):
-        item = collection_foots.find_one({"_id":ObjectId(k)}) #?
-        cost = item["cost"]
-        name = item["name"]
-        sum = cost * int(v)
-        total_count+=int(v)
-        total_sum+=sum
-        cart[i] = {"id": k ,"name":name, "cost":cost,"sum":sum}
-    return (cart,total_sum , total_count)
     """
     for i,(k,v) in enumerate(goods.items()): # comment for heroku
         amount = v
@@ -71,7 +58,17 @@ def get_cart_list(email = None):
         cart.append({"id":k , "amount":int(v)})
     return (cart,total_sum , total_count)
     """
- 
+    for i,(k,v) in enumerate(goods.items()):
+        item = collection_foots.find_one({"_id":ObjectId(k)}) #?
+        cost = item["cost"]
+        name = item["name"]
+        sum = cost * int(v)
+        total_count+=int(v)
+        total_sum+=sum
+        cart.append({"id": k ,"name":name, "cost":cost,"sum":sum})
+    return (cart,total_sum , total_count)
+    
+   
 @ca.route('/add/', methods = ['GET', 'POST'])
 def add_to_cart():
     #data = request.get_json() - если будет POST + возврат, если GET
@@ -103,7 +100,7 @@ def delete_one_from_cart():
         return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
     return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар удалён из корзины")
 
-@ca.route('/delete_all/', methods = ['GET', 'DELETE'])
+@ca.route('/delete_all/', methods = ['GET', 'DELETE' , 'POST'])
 def delete_all_from_cart():
     user_email = session.get("user").get("email")
     user_col = get_db_connection()[COLLECTION_NAME]
@@ -111,7 +108,7 @@ def delete_all_from_cart():
     user_col.update_one({"email":user_email} , {"$unset": {"cart":""}})
     return jsonify(error = 0, messages="Корзина очищена")
 
-@ca.route('/update/', methods = ['GET', 'PUT'])
+@ca.route('/update/', methods = ['GET', 'PUT' , 'POST'])
 def update_cart():
     data = get_cart_list()
     if data is None:
