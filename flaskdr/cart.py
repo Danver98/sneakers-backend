@@ -71,12 +71,15 @@ def get_cart_list(email = None):
    
 @ca.route('/add/', methods = ['GET', 'POST'])
 def add_to_cart():
-    #data = request.get_json() - если будет POST + возврат, если GET
-    item_id = request.args.get("id") # or data['id'] - POST
+    error = None
+    if request.method == 'GET':
+        return jsonify(error = error , messages = "That was GET method")
+    data = request.get_json(silent = True)
+    item_id = data.get("_id") or request.args.get("id")
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     if queries.get_one(item_id).get("count") <= 0:
-        return( jsonify(error = -3 , messages = "Товар отсутствует на складе/нет такого количества")) 
+        return( jsonify(error = -3 , messages = "Товар отсутствует на складе")) 
     user_email = session.get("user")["email"]
     user_col = get_db_connection()[COLLECTION_NAME]
     #user_col = get_new_db_users_col() # comment for heroku
@@ -87,8 +90,8 @@ def add_to_cart():
 
 @ca.route('/delete_one/', methods = ['GET', 'DELETE'])
 def delete_one_from_cart():
-    #data = request.get_json() - если будет DELETE/POST + возврат, если GET
-    item_id = request.args.get("id") # or data['id'] - POST/DELETE
+    data = request.get_json(silent = True)
+    item_id = data.get("_id") or request.args.get("id")
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр 'id товара' не передан"))
     user_email = session.get("user")["email"]
