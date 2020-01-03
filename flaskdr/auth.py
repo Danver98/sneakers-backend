@@ -3,8 +3,8 @@ from datetime import datetime , date
 from werkzeug.security import check_password_hash, generate_password_hash
 from bson import json_util
 import functools,json
-from . import database
-from . import user 
+from . import database 
+from flaskdr.user import User 
 bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
 @bp.route('/register/', methods = ['GET','POST'])
@@ -38,7 +38,7 @@ def register():
         error = "Не указан пароль"
         flash(error)
     if error is None: 
-        user = user.User(first_name,last_name,birth_date,phone,email,password)
+        user = User(first_name,last_name,birth_date,phone,email,password)
         col = database.get_db_connection()[database.COLLECTION_NAME]
         if col.find_one({"email": email}) is None:
             col.insert(user.get_user_data())
@@ -70,7 +70,7 @@ def login():
             error = 1
             flash("Не существует ползователя с таким логином(почтой)")
         elif check_password_hash(doc['password'],password):
-            user = user.User.convert_from_doc(doc)
+            user = User.convert_from_doc(doc)
             session.clear()
             session['user'] = user.get_user_data_no_passwd()
             session['user_id'] = str(doc['_id'])
