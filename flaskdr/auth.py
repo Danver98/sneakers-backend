@@ -86,7 +86,10 @@ def login():
 @bp.route('/logout/', methods=['POST', 'GET'])
 def logout():
     session.clear()
-    return jsonify(error = 0)
+    print("=====")
+    print("LOGOUT MESSAGE")
+    print("=====")
+    return jsonify(error = 0, messages = "Пользователь вышел из аккаунта")
 
 @bp.before_app_request
 def initalize_logged_user():
