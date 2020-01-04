@@ -1,4 +1,4 @@
-from flask import Flask , request , render_template , Response , jsonify
+from flask import Flask , request , render_template , Response , jsonify , session
 from flask_cors import CORS
 from instance.config import *
 from flaskdr.custom_response import CustomResponse
@@ -28,7 +28,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
         app.config.from_pyfile('production-config.py')
     CORS(app)
     #app.config.from_object(Configuration())
-    
+    # session["cart"] = {}
     # если @app.teardown_appcontext не используется
     database.init_db(app)   
     app.register_blueprint(auth.bp)   

@@ -74,7 +74,8 @@ def login():
             session.clear()
             session['user'] = user.get_user_data_no_passwd()
             session['user_id'] = str(doc['_id'])
-            #session['email'] = user.email
+            if session.get("cart") is not None:
+                col.update_one({"email":email} ,{"$set": {"cart":session.get("cart")}})
             credentials = {"firstName": user.first_name , "lastName": user.last_name}
             flash("Вы успешно вошли!")
             return  jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
