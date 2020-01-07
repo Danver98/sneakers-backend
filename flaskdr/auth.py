@@ -86,11 +86,20 @@ def login():
     
 @bp.route('/logout/', methods=['GET' ,'POST'])
 def logout():
+    print("The user is: " + session.get("user"))
     session.clear()
     print("=====")
     print("LOGOUT MESSAGE")
     print("=====")
     return jsonify(error = 0, messages = "Пользователь вышел из аккаунта")
+
+@bp.route('/test/', methods = ['GET','POST'])
+def test_for_logged():
+    user = session.get("user")
+    if not user:
+        print("From test_for_logged(): not authorized!")
+    else:
+        print("From test_for_logged(): user authorized: " + user)
 
 @bp.before_app_request
 def initalize_logged_user():
@@ -98,6 +107,7 @@ def initalize_logged_user():
     if user is None:
         g.user = None
     else:
+        print("User is authorized!: " + user)
         g.user = user
         g.user_id = session.get('user_id')
         #g.user_email = session.get('user').get('email)
