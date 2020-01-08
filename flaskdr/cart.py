@@ -179,6 +179,14 @@ def read_cart():
         return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
     return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Список товаров корзины")
 
+@ca.route('/test/', methods = ['GET','POST'])
+def test_for_logged():
+    user = session.get("user")
+    if not user:
+        return("From test_for_logged(): user is not authorized!")
+    else:
+        return("From test_for_logged(): user is authorized: " + user)
+
 @ca.route('/confirm', methods = ['GET', 'POST'])
 def receive_confirmation():
     delete_all_from_cart()
