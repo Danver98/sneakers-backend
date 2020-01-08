@@ -98,9 +98,9 @@ def logout():
 def test_for_logged():
     user = session.get("user")
     if not user:
-        return("From test_for_logged(): user is not authorized!")
+        return("From auth/test_for_logged(): user is not authorized!")
     else:
-        return("From test_for_logged(): user is authorized: " + user)
+        return("From auth/test_for_logged(): user is authorized: " + user)
 
 @bp.before_app_request
 def initalize_logged_user():

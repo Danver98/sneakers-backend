@@ -183,9 +183,9 @@ def read_cart():
 def test_for_logged():
     user = session.get("user")
     if not user:
-        return("From test_for_logged(): user is not authorized!")
+        return("From cart/test_for_logged(): user is not authorized!")
     else:
-        return("From test_for_logged(): user is authorized: " + user)
+        return("From cart/test_for_logged(): user is authorized: " + user)
 
 @ca.route('/confirm', methods = ['GET', 'POST'])
 def receive_confirmation():
