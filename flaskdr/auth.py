@@ -7,12 +7,15 @@ from . import database
 from flaskdr.user import User 
 bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
-@bp.route('/register/', methods = ['GET','POST'])
-def register():
+@bp.route('/register/<int:user_id>', methods = ['GET','POST'])
+def register(user_id):
     error = None
-    if request.method == 'GET':
+    if request.method == 'GET' and (not user_id):
         return jsonify(error = error , messages = "That was GET method")
+    #with open ("users.json","r", encoding="utf-8") as users_file:
+        #data = json.load(users_file).get("users")[user_id]
     data = request.get_json(force = True)
+    return data
     first_name = data['firstName']
     last_name = data['lastName'] 
     password = data['password'] 

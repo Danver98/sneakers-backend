@@ -12,8 +12,6 @@ CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
 ADMIN_NAME = " "
 #DATABASE_URI = "mongodb+srv://danver98:{}@cluster0-nsbea.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD)
 DATABASE_URI = "mongodb+srv://danver98:{}@cluster1-im2oj.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD_PROJECT_2)
-#DATABASE_URI = "mongodb+srv://dbDevelepner:54321@cluster0-dbjfp.azure.mongodb.net/test?retryWrites=true&w=majority"
-# добавить @login_required для других страниц
 
 def create_app(test_config = None,debug_config = True ,instance_relative_config = False):
     app = Flask(__name__)
