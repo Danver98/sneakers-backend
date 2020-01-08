@@ -73,6 +73,7 @@ def login():
             user = User.convert_from_doc(doc)
             session.clear()
             session['user'] = user.get_user_data_no_passwd()
+            print("From login() - The user is:"+ session.get("user"))
             session['user_id'] = str(doc['_id'])
             if session.get("cart") is not None:
                 col.update_one({"email":email} ,{"$set": {"cart":session.get("cart")}})
@@ -86,7 +87,7 @@ def login():
     
 @bp.route('/logout/', methods=['GET' ,'POST'])
 def logout():
-    print("The user is: " + session.get("user"))
+    print("From logout() - The user is: " + session.get("user"))
     session.clear()
     print("=====")
     print("LOGOUT MESSAGE")
@@ -97,9 +98,9 @@ def logout():
 def test_for_logged():
     user = session.get("user")
     if not user:
-        print("From test_for_logged(): not authorized!")
+        print("From test_for_logged(): user is not authorized!")
     else:
-        print("From test_for_logged(): user authorized: " + user)
+        print("From test_for_logged(): user is authorized: " + user)
 
 @bp.before_app_request
 def initalize_logged_user():
