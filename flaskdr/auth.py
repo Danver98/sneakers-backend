@@ -88,6 +88,7 @@ def login():
             response = jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
             response.headers.add('Access-Control-Allow-Headers',
             "Origin, X-Requested-With, Content-Type, Accept, x-auth")
+            return response
             #return  jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
         else:
             error = 2
@@ -104,6 +105,7 @@ def logout():
     response = jsonify(error = 0, messages = "Пользователь вышел из аккаунта")
     response.headers.add('Access-Control-Allow-Headers',
     "Origin, X-Requested-With, Content-Type, Accept, x-auth") 
+    return response
     #return jsonify(error = 0, messages = "Пользователь вышел из аккаунта")
 
 @bp.route('/test/', methods = ['GET','POST'])
