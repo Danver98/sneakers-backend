@@ -16,6 +16,7 @@ DATABASE_URI = "mongodb+srv://danver98:{}@cluster1-im2oj.mongodb.net/test?retryW
 def create_app(test_config = None,debug_config = True ,instance_relative_config = False):
     app = Flask(__name__)
     app.response_class = CustomResponse
+    """
     if debug_config:
         app.config.from_mapping(
             SECRET_KEY = os.environ.get("SECRET_KEY") or SECRET_KEY,
@@ -24,7 +25,12 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     else:
         app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or SECRET_KEY
         app.config.from_pyfile('production-config.py')
-    CORS(app)
+    """
+    app.config.from_mapping(
+        SECRET_KEY = os.environ.get("SECRET_KEY") or SECRET_KEY,
+        DATABASE_URI = DATABASE_URI
+    )
+    CORS(app, support_credentials = True)
     #app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
     #app.config.from_object(Configuration())
     # session["cart"] = {}
