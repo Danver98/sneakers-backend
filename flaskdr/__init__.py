@@ -25,8 +25,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
         app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or SECRET_KEY
         app.config.from_pyfile('production-config.py')
     CORS(app)
-    session.permanent = True
-    app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
+    #app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
     #app.config.from_object(Configuration())
     # session["cart"] = {}
     # если @app.teardown_appcontext не используется
