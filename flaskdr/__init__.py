@@ -30,7 +30,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
         SECRET_KEY = os.environ.get("SECRET_KEY") or SECRET_KEY,
         DATABASE_URI = DATABASE_URI
     )
-    CORS(app, supports_credentials = True)
+    #CORS(app, supports_credentials = True)
     #app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
     #app.config.from_object(Configuration())
     # session["cart"] = {}
