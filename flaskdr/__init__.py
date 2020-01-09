@@ -18,7 +18,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     app.response_class = CustomResponse
     if debug_config:
         app.config.from_mapping(
-            SECRET_KEY = SECRET_KEY,
+            SECRET_KEY = os.environ.get("SECRET_KEY") or SECRET_KEY,
             DATABASE_URI = DATABASE_URI
         )
     else:
