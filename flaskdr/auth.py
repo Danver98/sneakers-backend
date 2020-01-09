@@ -49,16 +49,16 @@ def register():
             flash("Пользователь с данным e-mail уже существует")
     return jsonify(error = error, messages = get_flashed_messages())
 
-@bp.route('/login/<int:user_id>',methods = ['GET','POST'])
-def login(user_id):
+@bp.route('/login/',methods = ['GET','POST'])
+def login():
     error = None
-    #if request.method == 'GET' and (not user_id):
-        #return jsonify(error = error , messages = "That was GET method")
-    with open("flaskdr/users.json", "r" , encoding="utf-8") as users_file:
-        users = json.load(users_file)
-    #users = request.get_json(force = True) - for cmd
-    data = users.get("users")[user_id]
-    #data = request.get_json(force = True)
+    if request.method == 'GET':
+        return jsonify(error = error , messages = "That was GET method")
+    #with open("flaskdr/users.json", "r" , encoding="utf-8") as users_file:
+        #users = json.load(users_file)
+    #users = request.get_json(force = True) 
+    #data = users.get("users")[user_id]
+    data = request.get_json(force = True)
     email = data['email']
     password = data['password']
     if not email:

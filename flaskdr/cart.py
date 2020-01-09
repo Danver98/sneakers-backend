@@ -95,14 +95,14 @@ def get_cart_list():
         cart.append({"id": k ,"name":name, "cost":cost, "count":v, "sum":sum})
     return (cart,total_sum , total_count)
       
-@ca.route('/add/<int:item_num>', methods = ['GET', 'POST'])
-def add_to_cart(item_num):
+@ca.route('/add/', methods = ['GET', 'POST'])
+def add_to_cart():
     error = None
-    #if request.method == 'GET':
-        #return jsonify(error = error , messages = "That was GET method")
-    #data = request.get_json(silent = True)
-    #item_id = data.get("_id") or request.args.get("id")
-    item_id = queries.get_filters_result("")[item_num].get("_id") # - убрать
+    if request.method == 'GET':
+        return jsonify(error = error , messages = "That was GET method")
+    data = request.get_json(silent = True)
+    item_id = data.get("_id") or request.args.get("id")
+    #item_id = queries.get_filters_result("")[item_num].get("_id") # - убрать
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     if queries.get_one(item_id).get("count") <= 0:
@@ -114,10 +114,10 @@ def add_to_cart(item_num):
         cart = change_user_cart(user["email"] , item_id, 1)
     return jsonify(error = 0 , cart=cart, messages="Товар добавлен в корзину")
 
-@ca.route('/delete_one/<item_id>', methods = ['GET','POST', 'DELETE'])
+@ca.route('/delete_one/', methods = ['GET','POST', 'DELETE'])
 def delete_one_from_cart(item_id):
-    #data = request.get_json(silent = True)
-    #item_id = data.get("_id") or request.args.get("id")
+    data = request.get_json(silent = True)
+    item_id = data.get("_id") or request.args.get("id")
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр 'id товара' не передан"))
     user = session.get("user")
@@ -144,10 +144,10 @@ def update_cart():
     data = get_cart_list()
     if data is None:
         return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
-    #data = request.get_json(silent = True)
-    #item_id = data.get("_id") or request.args.get("id")
-    #count = data.get("count") or request.args.get("count")
-    item_id , count = request.args.get("id") , request.args.get("count")
+    data = request.get_json(silent = True)
+    item_id = data.get("_id") or request.args.get("id")
+    count = data.get("count") or request.args.get("count")
+    #item_id , count = request.args.get("id") , request.args.get("count")
     if (item_id is None) or (count is None):
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     #if queries.get_one(item_id).get("count") < count:
