@@ -55,7 +55,7 @@ def del_from_session_cart(item_id = None):
     if session.get("cart") is None:
         return
     if item_id is not None:
-        session["cart"].pop(item_id)
+        session["cart"].pop(item_id,None)
         #queries.update_count(item_id, +amount)
     else:
         session["cart"].clear()
@@ -71,23 +71,17 @@ def del_from_user_cart(user_email,item_id = None):
         user_col.update_one({"email":user_email} , {"$unset": {"cart":""}})
         #queries.update_all()
 
-def get_new_db_users_col():
-    CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
-    DATABASE_URI = "mongodb+srv://danver98:{}@cluster1-im2oj.mongodb.net/test?retryWrites=true&w=majority".format(CONNECTION_PASSWORD_PROJECT_2)
-    DATABASE = "common_database"
-    COLLECTION_NAME = "users_collection"
-    con = MongoClient(DATABASE_URI)
-    db = con[DATABASE]
-    user_col = db[COLLECTION_NAME]
-    return user_col
-
 def get_cart_list():   
     user = session.get("user")
     if user is None:
+        print("From cart/get_cart_list() - the user is not authorized!")
         goods = session.get("cart")
+        print("This is session cart: " + str(goods))
     else:
+        print("From cart/get_cart_list() - user is authorized!")
         user_col = get_db_connection()[COLLECTION_NAME]
         goods = user_col.find_one({"email":user["email"]}).get("cart")
+        print("This is user cart: " + str(goods))
     if not goods:
         return None
     cart, total_sum , total_count = [] , 0 ,0
@@ -98,16 +92,17 @@ def get_cart_list():
         sum = cost * int(v)
         total_count+=int(v)
         total_sum+=sum
-        cart.append({"id": k ,"name":name, "cost":cost,"sum":sum})
+        cart.append({"id": k ,"name":name, "cost":cost, "count":v, "sum":sum})
     return (cart,total_sum , total_count)
       
-@ca.route('/add/', methods = ['GET', 'POST'])
-def add_to_cart():
+@ca.route('/add/<int:item_num>', methods = ['GET', 'POST'])
+def add_to_cart(item_num):
     error = None
-    if request.method == 'GET':
-        return jsonify(error = error , messages = "That was GET method")
-    data = request.get_json(silent = True)
-    item_id = data.get("_id") or request.args.get("id")
+    #if request.method == 'GET':
+        #return jsonify(error = error , messages = "That was GET method")
+    #data = request.get_json(silent = True)
+    #item_id = data.get("_id") or request.args.get("id")
+    item_id = queries.get_filters_result("")[item_num].get("_id") # - убрать
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     if queries.get_one(item_id).get("count") <= 0:
@@ -119,10 +114,10 @@ def add_to_cart():
         cart = change_user_cart(user["email"] , item_id, 1)
     return jsonify(error = 0 , cart=cart, messages="Товар добавлен в корзину")
 
-@ca.route('/delete_one/', methods = ['GET', 'DELETE'])
-def delete_one_from_cart():
-    data = request.get_json(silent = True)
-    item_id = data.get("_id") or request.args.get("id")
+@ca.route('/delete_one/<item_id>', methods = ['GET','POST', 'DELETE'])
+def delete_one_from_cart(item_id):
+    #data = request.get_json(silent = True)
+    #item_id = data.get("_id") or request.args.get("id")
     if item_id is None:
         return( jsonify(error = -2 , messages = "Параметр 'id товара' не передан"))
     user = session.get("user")
@@ -149,9 +144,10 @@ def update_cart():
     data = get_cart_list()
     if data is None:
         return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
-    data = request.get_json(silent = True)
-    item_id = data.get("_id") or request.args.get("id")
-    count = data.get("count") or request.args.get("count")
+    #data = request.get_json(silent = True)
+    #item_id = data.get("_id") or request.args.get("id")
+    #count = data.get("count") or request.args.get("count")
+    item_id , count = request.args.get("id") , request.args.get("count")
     if (item_id is None) or (count is None):
         return( jsonify(error = -2 , messages = "Параметр(ы) не передан(ы)"))
     #if queries.get_one(item_id).get("count") < count:
@@ -165,7 +161,8 @@ def update_cart():
     else:
         user_email = session.get("user")["email"]
         user_col = get_db_connection()[COLLECTION_NAME]
-        good = user_col.find_one({"$and":[{"email":user_email} , {"cart.$":{"$eq":item_id}}]})
+        #good = user_col.find_one({"$and":[{"email":user_email} , {"cart.$":{"$eq":item_id}}]})
+        good = user_col.find_one({"email":user_email}).get("cart").get(item_id)
         if good is None:
             return( jsonify(error = -1 , messages = "Товара с данным id нет в корзине")) 
         change_user_cart(user_email,item_id,count)
@@ -185,8 +182,12 @@ def test_for_logged():
     if not user:
         return("From cart/test_for_logged(): user is not authorized!")
     else:
-        return("From cart/test_for_logged(): user is authorized: " + user)
+        return("From cart/test_for_logged(): user is authorized: " + str(user))
 
+@ca.route('/all/', methods = ['GET','POST'])
+def get_db_goods():
+    return jsonify(queries.get_filters_result(request.args))
+    
 @ca.route('/confirm', methods = ['GET', 'POST'])
 def receive_confirmation():
     delete_all_from_cart()

@@ -36,7 +36,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     @app.route('/')
     def main_page():
         return jsonify(success = True,messages="This is app main page") 
-    
+    """
     @app.errorhandler(HTTPException)
     def handle_exception(e):
         if isinstance(e,InternalServerError):
@@ -48,5 +48,6 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
     def database_exception(e):
         print(traceback.format_exc())
         jsonify(error = -3 , messages = "Не удаётся выполнить запрос к базе данных. Попробуйте ещё раз")
+    """
     return app
 

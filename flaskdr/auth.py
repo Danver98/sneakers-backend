@@ -2,20 +2,17 @@ from flask import request , g ,flash, url_for, session , redirect ,current_app ,
 from datetime import datetime , date
 from werkzeug.security import check_password_hash, generate_password_hash
 from bson import json_util
-import functools,json
+import functools,json,os
 from . import database 
 from flaskdr.user import User 
 bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
-@bp.route('/register/<int:user_id>', methods = ['GET','POST'])
-def register(user_id):
+@bp.route('/register/', methods = ['GET','POST'])
+def register():
     error = None
-    if request.method == 'GET' and (not user_id):
+    if request.method == 'GET':
         return jsonify(error = error , messages = "That was GET method")
-    #with open ("users.json","r", encoding="utf-8") as users_file:
-        #data = json.load(users_file).get("users")[user_id]
-    data = request.get_json(force = True)
-    return data
+    data = request.get_json(force = True) 
     first_name = data['firstName']
     last_name = data['lastName'] 
     password = data['password'] 
@@ -52,12 +49,16 @@ def register(user_id):
             flash("Пользователь с данным e-mail уже существует")
     return jsonify(error = error, messages = get_flashed_messages())
 
-@bp.route('/login/',methods = ['GET','POST'])
-def login():
+@bp.route('/login/<int:user_id>',methods = ['GET','POST'])
+def login(user_id):
     error = None
-    if request.method == 'GET':
-        return jsonify(error = error , messages = "That was GET method")
-    data = request.get_json(force = True)
+    #if request.method == 'GET' and (not user_id):
+        #return jsonify(error = error , messages = "That was GET method")
+    with open("flaskdr/users.json", "r" , encoding="utf-8") as users_file:
+        users = json.load(users_file)
+    #users = request.get_json(force = True) - for cmd
+    data = users.get("users")[user_id]
+    #data = request.get_json(force = True)
     email = data['email']
     password = data['password']
     if not email:
@@ -74,10 +75,12 @@ def login():
             flash("Не существует пользователя с таким логином(почтой)")
         elif check_password_hash(doc['password'],password):
             user = User.convert_from_doc(doc)
-            session.clear()
+            #session.clear()
+            session.pop("user",None)
+            #session.pop("user_id",None)
             session['user'] = user.get_user_data_no_passwd()
-            print("From login() - The user is:"+ session.get("user"))
-            session['user_id'] = str(doc['_id'])
+            print("From login() - The user is:"+ str(session.get("user")))
+            #session['user_id'] = str(doc['_id'])
             if session.get("cart") is not None:
                 col.update_one({"email":email} ,{"$set": {"cart":session.get("cart")}})
             credentials = {"firstName": user.first_name , "lastName": user.last_name}
@@ -90,7 +93,7 @@ def login():
     
 @bp.route('/logout/', methods=['GET' ,'POST'])
 def logout():
-    print("From logout() - The user is: " + session.get("user"))
+    print("From logout() - The user is: " + str(session.get("user")))
     session.clear()
     print("=====")
     print("LOGOUT MESSAGE")
@@ -103,17 +106,18 @@ def test_for_logged():
     if not user:
         return("From auth/test_for_logged(): user is not authorized!")
     else:
-        return("From auth/test_for_logged(): user is authorized: " + user)
+        return("From auth/test_for_logged(): user is authorized: " + str(user))
 
 @bp.before_app_request
 def initalize_logged_user():
     user = session.get('user')
     if user is None:
         g.user = None
+        print("From initalize_logged_user() - the user is unauthorized!: ")
     else:
-        print("User is authorized!: " + user)
+        print("From initalize_logged_user() - the user is authorized!: " + str(user))
         g.user = user
-        g.user_id = session.get('user_id')
+        #g.user_id = session.get('user_id')
         #g.user_email = session.get('user').get('email)
     
 def login_required(view):
