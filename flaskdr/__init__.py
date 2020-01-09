@@ -5,7 +5,7 @@ from flaskdr.custom_response import CustomResponse
 from pymongo.errors import ConnectionFailure
 from werkzeug.exceptions import HTTPException, InternalServerError
 from . import  auth, catalog , cart , database
-import pymongo, os , traceback
+import pymongo, os , traceback , datetime
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
 CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
@@ -25,6 +25,8 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
         app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY") or SECRET_KEY
         app.config.from_pyfile('production-config.py')
     CORS(app)
+    session.permanent = True
+    app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
     #app.config.from_object(Configuration())
     # session["cart"] = {}
     # если @app.teardown_appcontext не используется
