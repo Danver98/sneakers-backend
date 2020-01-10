@@ -5,7 +5,7 @@ from flaskdr.custom_response import CustomResponse
 from pymongo.errors import ConnectionFailure
 from werkzeug.exceptions import HTTPException, InternalServerError
 from . import  auth, catalog , cart , database
-import pymongo, os , traceback , datetime
+import pymongo, os , traceback , datetime , redis
 SECRET_KEY = "*F-JaNdRgUkXp2s5v8y/B?E(H+KbPeSh"
 CONNECTION_PASSWORD = "C4pyEOgx7lD1dnce"
 CONNECTION_PASSWORD_PROJECT_2="UJPzENtW2usNKzUj"
