@@ -115,7 +115,7 @@ def add_to_cart():
     return jsonify(error = 0 , cart=cart, messages="Товар добавлен в корзину")
 
 @ca.route('/delete_one/', methods = ['GET','POST', 'DELETE'])
-def delete_one_from_cart(item_id):
+def delete_one_from_cart():
     data = request.get_json(silent = True)
     item_id = data.get("_id") or request.args.get("id")
     if item_id is None:
