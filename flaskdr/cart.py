@@ -163,49 +163,6 @@ def delete_all_from_cart():
 
 @ca.route('/update/', methods = ['PUT' , 'POST'])
 def update_cart():
-    data = get_cart_raw()
-    if data is None:
-        return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
-    data = request.get_json(silent = True)
-    item_id = data.get("_id") or request.args.get("id")
-    count = data.get("count") or request.args.get("count")
-    if (item_id is None) or (count is None):
-        return( jsonify(error = -1 , messages = "Параметр(ы) не передан(ы)"))
-    #if before - queries.get_one(item_id).get("count") < count:
-    #return( jsonify(error = -3 , messages = "Такого количества товара нет на складе"))
-    user = session.get("user")
-    if user is None:
-        good = session.get("cart").get(item_id)
-        if good is None:
-            return( jsonify(error = -2 , messages = "Товара с данным id нет в корзине")) 
-        change_session_cart(item_id,count)
-    else:
-        user_email = session.get("user")["email"]
-        user_col = get_db_connection()[COLLECTION_NAME]
-        good = user_col.find_one({"email":user_email}).get("cart").get(item_id)
-        if good is None:
-            return( jsonify(error = -2 , messages = "Товара с данным id нет в корзине")) 
-        change_user_cart(user_email,item_id,count)
-    data = get_cart_list()
-    return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён")
-
-@ca.route('/read/', methods = ['GET'])
-def read_cart():
-    data = get_cart_list()
-    if data is None:
-        return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
-    return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Список товаров корзины")
-
-@ca.route('/test/', methods = ['GET','POST'])
-def test_for_logged():
-    user = session.get("user")
-    if not user:
-        return("From cart/test_for_logged(): user is not authorized!")
-    else:
-        return("From cart/test_for_logged(): user is authorized: " + str(user))
-    
-@ca.route('/size/',  methods = ['GET','POST'])
-def test_size():
     cart = get_cart_raw()
     if cart is None:
         return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
@@ -226,6 +183,21 @@ def test_size():
     data = get_cart_list()
     return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён")
 
+@ca.route('/read/', methods = ['GET'])
+def read_cart():
+    data = get_cart_list()
+    if data is None:
+        return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
+    return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Список товаров корзины")
+
+@ca.route('/test/', methods = ['GET','POST'])
+def test_for_logged():
+    user = session.get("user")
+    if not user:
+        return("From cart/test_for_logged(): user is not authorized!")
+    else:
+        return("From cart/test_for_logged(): user is authorized: " + str(user))
+    
 @ca.route('/confirm', methods = ['GET', 'POST'])
 def receive_confirmation():
     delete_all_from_cart()
