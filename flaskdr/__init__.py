@@ -31,9 +31,7 @@ def create_app(test_config = None,debug_config = True ,instance_relative_config 
         DATABASE_URI = DATABASE_URI
     )
     CORS(app, supports_credentials = True)
-    #app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=30)
     #app.config.from_object(Configuration())
-    # session["cart"] = {}
     # если @app.teardown_appcontext не используется
     database.init_db(app)   
     app.register_blueprint(auth.bp)   

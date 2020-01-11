@@ -7,25 +7,22 @@ from . import database
 from flaskdr.user import User 
 bp = Blueprint('auth',__name__,url_prefix ='/auth')
 
-@bp.route('/register/', methods = ['GET','POST'])
+@bp.route('/register/', methods = ['POST'])
 def register():
-    error = None
-    if request.method == 'GET':
-        return jsonify(error = error , messages = "That was GET method")
     data = request.get_json(force = True) 
-    first_name = data['firstName']
-    last_name = data['lastName'] 
-    password = data['password'] 
-    phone = "+7" + data['telephone']
-    email = data['email'] 
-    birth_date = data['birthday']
+    first_name = data.get('firstName')
+    last_name = data.get('lastName') 
+    password = data.get('password') 
+    phone = "+7" + data.get('telephone')
+    email = data.get('email') 
+    birth_date = data.get('birthday')
     if not first_name:
         error = "Не указано имя"
         flash(error)
     if not last_name:
         error = "Не указана фамилия"
         flash(error)
-    if not phone:
+    if not data.get('telephone'):
         error = "Не указан телефон"
         flash(error)
     if not email:
@@ -43,24 +40,21 @@ def register():
         if col.find_one({"email": email}) is None:
             col.insert(user.get_user_data())
             flash("Вы успешно зарегистрировались!")
+            #session.clear()
+            #session['user'] = user.get_user_data_no_passwd()
+            #if session.get("cart") is not None:
+                #col.update_one({"email":email} ,{"$set": {"cart":session.get("cart")}})
             return jsonify(error = 0, messages = get_flashed_messages())
         else:
             error = 1
             flash("Пользователь с данным e-mail уже существует")
     return jsonify(error = error, messages = get_flashed_messages())
 
-@bp.route('/login/',methods = ['GET','POST'])
+@bp.route('/login/',methods = ['POST'])
 def login():
-    error = None
-    if request.method == 'GET':
-        return jsonify(error = error , messages = "That was GET method")
-    #with open("flaskdr/users.json", "r" , encoding="utf-8") as users_file:
-        #users = json.load(users_file)
-    #users = request.get_json(force = True) 
-    #data = users.get("users")[user_id]
     data = request.get_json(force = True)
-    email = data['email']
-    password = data['password']
+    email = data.get('email')
+    password = data.get('password')
     if not email:
         error = "Не указан e-mail"
         flash(error)
@@ -85,10 +79,6 @@ def login():
                 col.update_one({"email":email} ,{"$set": {"cart":session.get("cart")}})
             credentials = {"firstName": user.first_name , "lastName": user.last_name}
             flash("Вы успешно вошли!")
-            #response = jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
-            #response.headers.add('Access-Control-Allow-Headers',
-            #"Origin, X-Requested-With, Content-Type, Accept, x-auth")
-            # response
             return  jsonify( error = 0, credentials = credentials , messages = get_flashed_messages())
         else:
             error = 2
@@ -99,13 +89,6 @@ def login():
 def logout():
     print("From logout() - The user is: " + str(session.get("user")))
     session.clear()
-    print("=====")
-    print("LOGOUT MESSAGE")
-    print("=====")
-    #response = jsonify(error = 0, messages = "Пользователь вышел из аккаунта")
-    #response.headers.add('Access-Control-Allow-Headers',
-    #"Origin, X-Requested-With, Content-Type, Accept, x-auth") 
-    #return response
     return jsonify(error = 0, messages = "Пользователь вышел из аккаунта")
 
 @bp.route('/test/', methods = ['GET','POST'])
