@@ -41,9 +41,10 @@ def register():
             col.insert(user.get_user_data())
             flash("Вы успешно зарегистрировались!")
             #session.clear()
-            #session['user'] = user.get_user_data_no_passwd()
-            #if session.get("cart") is not None:
-                #col.update_one({"email":email} ,{"$set": {"cart":session.get("cart")}})
+            session.pop("user",None)
+            session['user'] = user.get_user_data_no_passwd()
+            if session.get("cart") is not None:
+                col.update_one({"email":email} ,{"$set": {"cart":session.get("cart")}})
             return jsonify(error = 0, messages = get_flashed_messages())
         else:
             error = 1
