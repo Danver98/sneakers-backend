@@ -19,4 +19,4 @@ class DevelopmentConfiguration(Configuration):
     ENV = 'development'
     CONNECTION_PASSWORD="UJPzENtW2usNKzUj"
     CLUSTER ="cluster1-im2oj"
-    DATABASE_URI = "mongodb+srv://{}:{}@{}.mongodb.net/test?retryWrites=true&w=majority".format(super().CONNECTION_USER,CONNECTION_PASSWORD,CLUSTER)
+    DATABASE_URI = "mongodb+srv://{}:{}@{}.mongodb.net/test?retryWrites=true&w=majority".format(Configuration.CONNECTION_USER,CONNECTION_PASSWORD,CLUSTER)
