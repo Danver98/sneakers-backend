@@ -117,8 +117,8 @@ def check_item(item_id , count , size):
     good = queries.get_one(item_id)
     if good.get("count") < (count - good_count):
         return (-3, "Такого количества товара нет на складе")
-    if (size not in good.get("size")):
-        return (-4, "Товара с данным размером нет на складе")
+    #if (size not in good.get("size")):
+        #return (-4, "Товара с данным размером нет на складе")
     return None  
  
 @ca.route('/add/', methods = ['POST'])
@@ -170,7 +170,7 @@ def update_cart():
     item_id = data.get("_id") or request.args.get("id")
     count = data.get("count") or request.args.get("count")
     size = data.get("size") or request.args.get("size")
-    if (item_id is None) or (count is None) or (size is None):
+    if (item_id is None) or (count is None): #or (size is None):
         return( jsonify(error = -1 , messages = "Параметр(ы) не передан(ы)"))
     problem = check_item(item_id , count , size)
     if problem is not None:
