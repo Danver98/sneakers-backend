@@ -16,6 +16,7 @@ def register():
     phone = "+7" + data.get('telephone')
     email = data.get('email') 
     birth_date = data.get('birthday')
+    error = None
     if not first_name:
         error = "Не указано имя"
         flash(error)
@@ -56,6 +57,7 @@ def login():
     data = request.get_json(force = True)
     email = data.get('email')
     password = data.get('password')
+    error = None
     if not email:
         error = "Не указан e-mail"
         flash(error)
