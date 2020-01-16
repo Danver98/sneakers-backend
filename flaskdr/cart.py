@@ -52,7 +52,7 @@ def get_cart_list():
     cart, total_sum , total_count = [] , 0 ,0
     for (k,v) in goods.items():
         item = queries.get_one(k)
-        cost = item["cost"]
+        cost = int(item["cost"])
         name = item["name"]
         img = item["img"]
         size = v["size"]
