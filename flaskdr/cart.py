@@ -215,8 +215,9 @@ def update_cart():
         change_session_cart(item_id,"count" ,int(count))
     else:
         change_user_cart(user["email"],item_id,"count" ,int(count))
-    data = get_cart_list()
-    return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён")
+    return jsonify(error = 0, messages="Товар обновлён")
+    #data = get_cart_list()
+    #return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён")
 
 @ca.route('/update_size/', methods = ['PUT' , 'POST'])
 def update_size():
@@ -236,8 +237,9 @@ def update_size():
         change_session_cart(item_id,"size",float(size))
     else:
         change_user_cart(user["email"],item_id,"size",float(size))
-    data = get_cart_list()
-    return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён") 
+    return jsonify(error = 0, messages="Товар обновлён")    
+    #data = get_cart_list()
+    #return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён") 
 
 @ca.route('/read/', methods = ['GET'])
 def read_cart():
