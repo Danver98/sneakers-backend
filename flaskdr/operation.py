@@ -1,6 +1,4 @@
 """
- какая-то ХРЕНЬ
-
 from flask import jsonify, request, Blueprint,flash,redirect,url_for,render_template,get_flashed_messages
 import random 
 import cart
@@ -10,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 #import user
 bp = Blueprint('author',__name__,url_prefix='/author')
 
-#какой url?
+
 ''''def place_order():
 
   # принимаем объект корзины
@@ -27,7 +25,7 @@ bp = Blueprint('author',__name__,url_prefix='/author')
   # false - забываем корзину(чистим)
   # возращаем на главную страницу
  #https://my-app.herokuapp.com/auth/
-  # если ошибка не правильно заполнена карта то во зращаем на карту
+  # если ошибка не правильно заполнена карта то возращаем на карту
   #
 @bp.route('/card_entry/',method = ['POST'])
 def card_entry():
