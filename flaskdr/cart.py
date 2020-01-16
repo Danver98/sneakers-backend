@@ -182,10 +182,7 @@ def delete_one_from_cart():
         del_from_session_cart(item_id)
     else:
         del_from_user_cart(user["email"],item_id)   
-    data = get_cart_list()
-    if data is None:
-        return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
-    return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар удалён из корзины")
+    return jsonify(error = 0 , messages="Товар удалён из корзины")
 
 @ca.route('/delete_all/', methods = ['GET', 'DELETE' , 'POST'])
 def delete_all_from_cart():
