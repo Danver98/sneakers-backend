@@ -50,9 +50,14 @@ class User(object):
     def cart(self):
         return self.__cart   
 
-    def get_user_data(self):
-        return {"first_name" : self.__first_name , "last_name": self.__last_name , "birth_date": self.__birth_date, "phone": self.__phone , "email": self.__email , "password": self.__password}
-    
+    def get_user_data(self, *args):
+        if not args:
+            return {"first_name" : self.__first_name , "last_name": self.__last_name , "birth_date": self.__birth_date, "phone": self.__phone , "email": self.__email , "password": self.__password} 
+        user_data = {}
+        for arg in args:
+            user_data[arg] = getattr(self,arg)
+        return user_data
+
     def get_user_data_no_passwd(self):
         return {"first_name" : self.__first_name , "last_name": self.__last_name , "birth_date": self.__birth_date, "phone": self.__phone , "email": self.__email}
 
