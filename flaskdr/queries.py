@@ -1,6 +1,8 @@
 import pymongo
 from . import foots
 from . import query
+#import foots
+#import query
 from bson.objectid import ObjectId
 
 dmitriy = pymongo.MongoClient('mongodb+srv://dmitriy:admin@cluster0-0jgxv.mongodb.net/test?retryWrites=true&w=majority')
@@ -12,7 +14,7 @@ def get_filters_result(param):
     query_param = query.Query()
     query_param.add_index(param)
 
-    cursor = collection_foots.find(query_param.get_query(), {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1})
+    cursor = collection_foots.find(query_param.get_query(), {"_id": 1, "name": 1, "cost": 1, "description": 1, "img": 1})
     if len (query_param.get_sort()) > 0:
         cursor.sort(query_param.get_sort())
 
@@ -37,9 +39,11 @@ def update_count(obj_id, step):
     update_param(obj_id, "count", get_one(obj_id).get("count") + step)
 
 def get_search_result(param):
-    query_list = param["query"].split('%')
+    query_words = param["query"].split('%')
 
-    cursor = collection_foots.find({}, {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1})
+    query_str = " ".join(query_words)
+
+    cursor = collection_foots.find({"$text": {"$search": query_str}}, {"_id": 1, "name": 1, "cost": 1, "description": 1, "img": 1})
 
     foot_list = foots.FootList()
 
