@@ -36,6 +36,7 @@ class Cart:
         
 ca = Blueprint('cart',__name__,url_prefix ='/cart')
 # Используется 'cart': {'id1':1, 'id2':2 , ...}
+# Используется 'cart': {'id1':{'count':1 , 'size':40}, 'id2':{'count':2 , 'size':39}, ...}
 def get_cart_raw():  
     user = session.get("user")
     if user is None:
@@ -43,7 +44,7 @@ def get_cart_raw():
     else:
         user_col = get_db_connection()[COLLECTION_NAME]
         return user_col.find_one({"email":user["email"]}).get("cart")
-        
+
 def get_cart_list():   
     goods = get_cart_raw()
     if not goods:
@@ -53,11 +54,13 @@ def get_cart_list():
         item = queries.get_one(k)
         cost = item["cost"]
         name = item["name"]
-        sum = cost * int(v)
-        total_count+=int(v)
+        img = item["img"]
+        size = v["size"]
+        sum = cost * int(v["count"])
+        total_count+=int(v["count"])
         total_sum+=sum
-        cart.append({"id": k ,"name":name, "cost":cost, "count":v, "sum":sum})
-    return (cart,total_sum , total_count)
+        cart.append({"id": k ,"name":name, "img":img, "size":size, "cost":cost, "count":int(v["count"]), "sum":sum})
+    return (cart,total_sum , total_count)      
 
 def reset_db_goods_count(item_id = None):
     goods = get_cart_raw()
@@ -65,26 +68,49 @@ def reset_db_goods_count(item_id = None):
         return
     if item_id is not None:
         item = queries.get_one(item_id)
-        item["count"]+=goods.get(item_id)
+        item["count"]+=goods.get(item_id).get("count")
         return
     for (k,v) in goods.items():
         item = queries.get_one(k)
-        item["count"]+=v
+        item["count"]+=v["count"]
 
-def change_session_cart(item_id, count):
+def make_count_and_size(item_id):
+    sizes = queries.get_one(item_id)["size"]
+    if len(sizes) ==0:
+        size = None
+    else:
+        size = sizes[0]
+    item = {"count":1 , "size":size}
+    return item
+
+def add_to_session_cart(item_id):
     if session.get("cart") is None:
         session["cart"] = {}
-    #before = session["cart"].get(item_id,0)
-    #queries.update_count(item_id, before - int(count))
-    session["cart"][item_id] = int(count)
+    #queries.update_count(item_id, -1)
+    session["cart"][item_id] = make_count_and_size(item_id)
     session.modified = True
     return session["cart"]
-    
-def change_user_cart(user_email,item_id,count):
+
+def add_to_user_cart(user_email,item_id):
     user_col = get_db_connection()[COLLECTION_NAME]
-    #before = user_col.find_one({"email":user_email}).get("cart").get(item_id,0)
-    #queries.update_count(item_id, before - int(count))
-    user_col.update_one({"email":user_email} , {"$set": {"cart.{}".format(item_id):int(count)}})  
+    #queries.update_count(item_id, -1)   
+    user_col.update_one({"email":user_email} , {"$set": {"cart.{}".format(item_id):make_count_and_size(item_id)}})  
+    return user_col.find_one({"email":user_email}).get("cart")
+    
+def change_session_cart(item_id , key , value):
+    #if key == "count" :
+        #before = session["cart"].get(item_id).get("count",0)
+        #queries.update_count(item_id, before - int(count))
+    session["cart"][item_id][key] = value
+    session.modified = True
+    return session["cart"]
+
+def change_user_cart(user_email,item_id,key,value):
+    user_col = get_db_connection()[COLLECTION_NAME]
+    #if key == "count" in kwargs:
+        #before = user_col.find_one({"email":user_email}).get("cart").get(item_id).get(count,0)
+        #queries.update_count(item_id, before - int(count))
+    user_col.update_one({"email":user_email} , {"$set": {"cart.{}.{}".format(item_id,key):value}})  
     return user_col.find_one({"email":user_email}).get("cart")
 
 def del_from_session_cart(item_id = None):
@@ -115,12 +141,21 @@ def check_item(item_id , count , size):
     if good_count is None:
         return (-2, "Товара с данным id нет в корзине")
     good = queries.get_one(item_id)
-    if good.get("count") < (count - good_count):
+    if good.get("count") < (count - good_count["count"]):
         return (-3, "Такого количества товара нет на складе")
     #if (size not in good.get("size")):
         #return (-4, "Товара с данным размером нет на складе")
     return None  
  
+def check_size(item_id, size):
+    goods = get_cart_raw()
+    if not goods:
+        return (0, "Корзина пуста")
+    good = queries.get_one(item_id)
+    if (size not in good.get("size")):
+        return (-4, "Товара с данным размером нет на складе")
+    return None
+
 @ca.route('/add/', methods = ['POST'])
 def add_to_cart():
     data = request.get_json(silent = True)
@@ -131,9 +166,9 @@ def add_to_cart():
         return( jsonify(error = -3 , messages = "Товар отсутствует на складе"))
     user = session.get("user")
     if user is None:
-        cart = change_session_cart(item_id,1)
+        cart = add_to_session_cart(item_id)
     else:
-        cart = change_user_cart(user["email"] , item_id, 1)
+        cart = add_to_user_cart(user["email"] , item_id)
     return jsonify(error = 0 , cart=cart, messages="Товар добавлен в корзину")
 
 @ca.route('/delete_one/', methods = ['POST', 'DELETE'])
@@ -177,11 +212,32 @@ def update_cart():
         return jsonify(error = problem[0] , messages = problem[1])
     user = session.get("user")
     if user is None:
-        change_session_cart(item_id,count)
+        change_session_cart(item_id,"count" ,int(count))
     else:
-        change_user_cart(user["email"],item_id,count)
+        change_user_cart(user["email"],item_id,"count" ,int(count))
     data = get_cart_list()
     return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён")
+
+@ca.route('/update_size/', methods = ['PUT' , 'POST'])
+def update_size():
+    cart = get_cart_raw()
+    if cart is None:
+        return jsonify(error = 0 , cart = None ,messages="Корзина пуста")
+    data = request.get_json(silent = True)
+    item_id = data.get("_id") or request.args.get("id")
+    size = data.get("size") or request.args.get("size")
+    if (item_id is None) or (size is None):
+        return( jsonify(error = -1 , messages = "Параметр(ы) не передан(ы)"))
+    problem = check_size(item_id, float(size))
+    if problem is not None:
+        return jsonify(error = problem[0] , messages = problem[1])
+    user = session.get("user")
+    if user is None:
+        change_session_cart(item_id,"size",float(size))
+    else:
+        change_user_cart(user["email"],item_id,"size",float(size))
+    data = get_cart_list()
+    return jsonify(error = 0 , cart = data[0] , total_sum = data[1] , total_count = data[2], messages="Товар обновлён") 
 
 @ca.route('/read/', methods = ['GET'])
 def read_cart():
