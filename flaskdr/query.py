@@ -13,7 +13,7 @@ class Query:
 
                 self.query["$or"] = value_list
             elif index == "cost":
-                self.query["cost"] = {"$gte": int(param[index]) - 1000, "$lte": int(param[index]) + 1000}
+                self.query["cost"] = {"$gte": str(int(param[index]) - 1000), "$lte": str(int(param[index]) + 1000)}
             elif index == "sort":
                 value_list = param[index].split('-')
                 param_key = value_list[0]
