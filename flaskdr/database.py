@@ -15,7 +15,6 @@ def get_col():
         g.db = MongoClient(current_app.config['DATABASE_URI'])[DATABASE]
     return g.db[COLLECTION_NAME]
 
-
 def get_definite_col(con_URI = None ,db_name = None , col_name = None):
     if con_URI is None:
         con_URI = current_app.config['DATABASE_URI']
@@ -24,12 +23,7 @@ def get_definite_col(con_URI = None ,db_name = None , col_name = None):
     if col_name is None:
         col_name = COLLECTION_NAME
     return MongoClient(con_URI)[db_name][col_name]
- 
-     
-
-
-
-
+    
 def close_db_connetion(e = None):
     g.pop('db',None)
     con = g.pop('con',None)
