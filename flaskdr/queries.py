@@ -14,7 +14,7 @@ def get_filters_result(param):
     query_param = query.Query()
     query_param.add_index(param)
 
-    cursor = collection_foots.find(query_param.get_query(), {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1})
+    cursor = collection_foots.find(query_param.get_query(), {"_id": 1, "name": 1, "cost": 1, "description": 1, "img": 1})
     if len (query_param.get_sort()) > 0:
         cursor.sort(query_param.get_sort())
 
@@ -43,7 +43,7 @@ def get_search_result(param):
 
     query_str = " ".join(query_words)
 
-    cursor = collection_foots.find({"$text": {"$search": query_str}}, {"_id": 1, "name": 1, "cost": 1, "text": 1, "img": 1})
+    cursor = collection_foots.find({"$text": {"$search": query_str}}, {"_id": 1, "name": 1, "cost": 1, "description": 1, "img": 1})
 
     foot_list = foots.FootList()
 
