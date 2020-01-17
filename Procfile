@@ -1,1 +1,1 @@
-web: gunicorn flaskdr:'create_app()'
+web: gunicorn flaskdr:'create_app'
